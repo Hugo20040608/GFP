@@ -1,0 +1,78 @@
+title = "Mystery at the Manor"
+
+[settings]
+background_music = "suspense_theme.mp3"
+default_background = "manor_evening.jpg"
+
+[characters]
+  [characters.hero]
+  name = "Alex"
+  description = "A curious detective with a keen sense of observation."
+
+  [characters.butler]
+  name = "Mr. Grieves"
+  description = "The old and loyal butler of the manor, knows all its secrets."
+
+  [characters.maid]
+  name = "Sophia"
+  description = "A young maid, who is new to the manor and seems nervous."
+
+[scenes]
+  [scenes.intro]
+  background = "manor_gate.jpg"
+  music = "rainy_night.ogg"
+  text = "It was a dark and stormy night as Alex arrived at the old manor."
+  choices = [
+    { text = "Enter the manor.", next_scene = "foyer" },
+    { text = "Look around the garden first.", next_scene = "garden" }
+  ]
+
+  [scenes.foyer]
+  background = "manor_foyer.jpg"
+  music = "creaky_floor.ogg"
+  text = "The foyer was dimly lit, shadows dancing across the old portraits."
+  choices = [
+    { text = "Talk to the butler.", next_scene = "talk_butler" },
+    { text = "Explore the library.", next_scene = "library" }
+  ]
+
+  [scenes.garden]
+  background = "manor_garden_night.jpg"
+  music = "windy_leaves.ogg"
+  text = "The garden was lush and mysterious under the moonlight, an eerie silence hanging in the air."
+  choices = [
+    { text = "Inspect the garden shed.", next_scene = "shed" },
+    { text = "Return to the manor entrance.", next_scene = "foyer" }
+  ]
+
+[scenes.talk_butler]
+background = "manor_dining_hall.jpg"
+music = "low_murmur.ogg"
+text = "Mr. Grieves welcomed Alex with a cautious glance, 'May I help you with something, sir?'"
+choices = [
+  { text = "Ask about the manor's history.", next_scene = "history" },
+  { text = "Inquire about the recent strange events.", next_scene = "events" }
+]
+
+[scenes.library]
+background = "manor_library.jpg"
+music = "soft_whispers.ogg"
+text = "The library was filled with ancient books, their secrets almost whispering to Alex."
+choices = [
+  { text = "Examine the mysterious book on the table.", next_scene = "book_discovery" },
+  { text = "Look through the window.", next_scene = "window_view" }
+]
+
+[scenes.history]
+text = "Mr. Grieves narrated the rich and tumultuous history of the manor, dating back several centuries."
+choices = [
+  { text = "Continue listening.", next_scene = "continue_history" },
+  { text = "Thank him and leave.", next_scene = "foyer" }
+]
+
+[scenes.events]
+text = "The butler hesitated, then spoke of shadows moving in the night and whispers in the corridors."
+choices = [
+  { text = "Delve deeper into the mystery.", next_scene = "deeper_mystery" },
+  { text = "Change the topic.", next_scene = "foyer" }
+]

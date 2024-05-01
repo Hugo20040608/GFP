@@ -70,9 +70,3 @@ choices = [
   { text = "Thank him and leave.", next_scene = "foyer" }
 ]
 
-[scenes.events]
-text = "The butler hesitated, then spoke of shadows moving in the night and whispers in the corridors."
-choices = [
-  { text = "Delve deeper into the mystery.", next_scene = "deeper_mystery" },
-  { text = "Change the topic.", next_scene = "foyer" }
-]

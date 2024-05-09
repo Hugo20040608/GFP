@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=-Wall -I/opt/homebrew/opt/sdl2/include/SDL2  # 更新 include 路徑
-LDFLAGS=-L/opt/homebrew/opt/sdl2/lib               # 更新 lib 路徑
+CFLAGS=-Wall -Isrc/include  # 更新 include 路徑
+LDFLAGS=-Lsrc/lib              # 更新 lib 路徑
 LIBS=-lSDL2
 
 # Detect the operating system

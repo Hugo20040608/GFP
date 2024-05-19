@@ -3,40 +3,76 @@
 #include <stdint.h>
 #include <string.h>
 #include <SDL2/SDL.h>
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
 
-int main(int argc, char *argv[]){
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-        return 1;
-    }
+#define TRUE 1
+#define FALSE 0
 
-    SDL_Window *window = NULL;
-    SDL_Event e;
-    while (1){
-        if (SDL_PollEvent(&e)){
-            if (e.type == SDL_QUIT){
-                break;
-            }
-        }
+int game_is_running = FALSE; 
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
+int initialize(){
+    if(SDL_Init(SDL_INIT_EVERYTHING) != 0){
+        printf("Error initializing SDL: %s\n", SDL_GetError());
+        return FALSE;
     }
-    SDL_Renderer *renderer = NULL;
-    SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, 0, &window, &renderer);
-    if (window == NULL || renderer == NULL){
-        printf("Window or Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
-        return 1;
+    window = SDL_CreateWindow(
+        NULL, 
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        800,
+        600,
+        SDL_WINDOW_BORDERLESS
+    );
+    if(!window){
+        printf("Error creating window: %s\n", SDL_GetError());
+        return FALSE;
     }
-    SDL_RenderSetScale(renderer, 4, 4);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawPoint(renderer, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    SDL_RenderPresent(renderer);
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    if(!renderer){
+        printf("Error creating renderer: %s\n", SDL_GetError());
+        return FALSE;
+    }
+    return TRUE;
+}
+void setup(){
+    // TODO
+}
+void process_input(){
+    SDL_Event event;
+    SDL_PollEvent(&event);
 
+    switch(event.type){
+        case SDL_QUIT: // X button
+            game_is_running = FALSE;
+            break;
+        case SDL_KEYDOWN: // key press
+            if(event.key.keysym.sym == SDLK_ESCAPE)
+                game_is_running = FALSE;
+            break;
+    }
+}
+void update(){
+    // TODO
+}
+void render(){
+    // TODO
+}
+void destroy_window(){
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+int main(int argc, char *argv[]){
+    game_is_running = initialize();
+    
+    setup();
 
+    while(game_is_running){
+        process_input();
+        update();
+        render();
+    }
+
+    destroy_window();
     return 0;
 }

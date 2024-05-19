@@ -1,5 +1,5 @@
 all:
-	gcc main.c -o game
+	gcc main.c -lSDL2 -o game
 run:
 	./game
 clean:

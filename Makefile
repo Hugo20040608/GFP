@@ -1,36 +1,6 @@
-CC=gcc
-CFLAGS=-Wall -Isrc/include  # 更新 include 路徑
-LDFLAGS=-Lsrc/lib              # 更新 lib 路徑
-LIBS=-lSDL2
-
-# Detect the operating system
-ifeq ($(OS),Windows_NT)
-    CC=i686-w64-mingw32-gcc
-    LDFLAGS=-Llib
-    LIBS=-lmingw32 -lSDL2main $(LIBS) -mwindows
-else
-    UNAME_S := $(shell uname -s)
-    ifeq ($(UNAME_S),Linux)
-        CFLAGS+=-D_REENTRANT
-    endif
-    ifeq ($(UNAME_S),Darwin)
-        CFLAGS+=-D_THREAD_SAFE
-    endif
-endif
-
-TARGET=program
-SRC=main.c
-OBJ=$(SRC:.c=.o)
-
-all: $(TARGET)
-
-$(TARGET): $(OBJ)
-	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
+all:
+	gcc main.c -o game
+run:
+	./game
 clean:
-	rm -f $(TARGET) $(OBJ)
-
-.PHONY: all clean
+	rm game

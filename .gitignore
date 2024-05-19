@@ -3,4 +3,4 @@
 # production
 /build
 *.o
-program
+game

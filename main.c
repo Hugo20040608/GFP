@@ -6,11 +6,25 @@
 
 #define TRUE 1
 #define FALSE 0
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
+#define FPS 30
+#define FRAME_TARGET_TIME (1000 / FPS)
+
+struct ball{
+    int x;
+    int y;
+    int width;
+    int height;
+} ball;
 
 int game_is_running = FALSE; 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
-int initialize(){
+
+int last_frame_time = 0;
+
+int initialize_window(){
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0){
         printf("Error initializing SDL: %s\n", SDL_GetError());
         return FALSE;
@@ -19,8 +33,8 @@ int initialize(){
         NULL, 
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        800,
-        600,
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
         SDL_WINDOW_BORDERLESS
     );
     if(!window){
@@ -35,7 +49,10 @@ int initialize(){
     return TRUE;
 }
 void setup(){
-    // TODO
+    ball.x = 200;
+    ball.y = 200;
+    ball.width = 100;
+    ball.height = 100;
 }
 void process_input(){
     SDL_Event event;
@@ -51,11 +68,39 @@ void process_input(){
             break;
     }
 }
+int change_x = 5;
+int change_y = 5;
 void update(){
-    // TODO
+    // wait some time 
+    while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
+
+    last_frame_time = SDL_GetTicks();
+    
+    if(ball.x >= WINDOW_WIDTH - ball.width || ball.x <= 0){
+        change_x = -change_x;
+    }
+
+    if(ball.y >= WINDOW_HEIGHT - ball.height || ball.y <= 0){
+        change_y = -change_y;
+    }
+    ball.x += change_x;
+    ball.y += change_y;
 }
 void render(){
-    // TODO
+    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 165);
+    SDL_RenderClear(renderer);
+    
+    // Draw before present
+    SDL_Rect rect_ball = {
+        ball.x,
+        ball.y,
+        ball.width,
+        ball.height
+    };
+    SDL_SetRenderDrawColor(renderer,189, 254, 37, 255);
+    SDL_RenderFillRect(renderer, &rect_ball);
+
+    SDL_RenderPresent(renderer);
 }
 void destroy_window(){
     SDL_DestroyRenderer(renderer);
@@ -63,7 +108,7 @@ void destroy_window(){
     SDL_Quit();
 }
 int main(int argc, char *argv[]){
-    game_is_running = initialize();
+    game_is_running = initialize_window();
     
     setup();
 

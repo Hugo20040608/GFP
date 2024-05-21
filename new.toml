@@ -1,0 +1,162 @@
+# 劇本檔
+
+# 場景定義
+[[scenes]]
+id = "scene_1"
+name = "神秘森林"
+background_image = "forest_background.jpg"
+description = "這是一個神秘的森林，光線透過樹葉斑駁地灑在地上。"
+
+[[scenes]]
+id = "scene_2"
+name = "古老城堡"
+background_image = "castle_background.jpg"
+description = "古老的城堡矗立在山頂，陰森的氣氛讓人不寒而慄。"
+
+[[scenes]]
+id = "scene_3"
+name = "村莊廣場"
+background_image = "village_background.jpg"
+description = "這是一個和平的小村莊，村民們在廣場上忙碌著。"
+
+# 人物定義
+[[characters]]
+id = "character_1"
+name = "勇者"
+portrait_image = "hero.jpg"
+description = "勇者是個年輕而勇敢的人，他的目標是拯救世界。"
+
+[[characters]]
+id = "character_2"
+name = "神秘老人"
+portrait_image = "old_man.jpg"
+description = "神秘的老人似乎知道一些不可告人的秘密。"
+
+[[characters]]
+id = "character_3"
+name = "村莊長老"
+portrait_image = "elder.jpg"
+description = "村莊的長老，擁有豐富的智慧和經驗。"
+
+# 物品定義
+[[items]]
+id = "item_1"
+name = "魔法石"
+icon_image = "magicstone.jpg"
+description = "這是一顆閃爍著藍光的魔法石，據說能改變命運。"
+
+[[items]]
+id = "item_2"
+name = "古書"
+icon_image = "ancientbook.jpg"
+description = "一本古老的書籍，裡面記載了許多失傳的秘術。"
+
+# 劇情和對話設定
+[[events]]
+id = "event_1"
+scene_id = "scene_1"
+description = """
+勇者走進神秘的森林，突然聽到一個低沉的聲音。
+"""
+choices = [
+    { text = "尋找聲音的來源", next_event_id = "event_2" },
+    { text = "無視聲音繼續前進", next_event_id = "event_3" }
+]
+
+[[events]]
+id = "event_2"
+scene_id = "scene_1"
+character_id = "character_2"
+description = """
+勇者發現聲音的來源是一位神秘老人。老人告訴他，森林中藏著一顆改變命運的魔法石。
+"""
+choices = [
+    { text = "相信老人，去尋找魔法石", next_event_id = "event_4" },
+    { text = "不相信老人，繼續前進", next_event_id = "event_3" }
+]
+
+[[events]]
+id = "event_3"
+scene_id = "scene_1"
+description = """
+勇者無視了聲音，繼續前進，卻不小心掉進了一個陷阱。故事結束。
+"""
+is_ending = true
+
+[[events]]
+id = "event_4"
+scene_id = "scene_2"
+description = """
+勇者按照老人的指引來到了古老的城堡，開始尋找魔法石。
+"""
+choices = [
+    { text = "在城堡中探索", next_event_id = "event_5" },
+    { text = "離開城堡", next_event_id = "event_6" }
+]
+
+[[events]]
+id = "event_5"
+scene_id = "scene_2"
+item_id = "item_1"
+description = """
+勇者在城堡中找到了魔法石，他的命運從此改變。故事結束。
+"""
+is_ending = true
+
+[[events]]
+id = "event_6"
+scene_id = "scene_2"
+description = """
+勇者離開了城堡，回到了森林。故事結束。
+"""
+is_ending = true
+
+[[events]]
+id = "event_7"
+scene_id = "scene_3"
+character_id = "character_3"
+description = """
+勇者來到村莊廣場，遇見了村莊長老。長老告訴他關於魔法石的傳說。
+"""
+choices = [
+    { text = "詢問魔法石的下落", next_event_id = "event_8" },
+    { text = "不理會長老的話", next_event_id = "event_9" }
+]
+
+[[events]]
+id = "event_8"
+scene_id = "scene_3"
+description = """
+長老告訴勇者，魔法石被藏在古老城堡的地下室。勇者決定前往城堡。
+"""
+choices = [
+    { text = "前往城堡", next_event_id = "event_4" }
+]
+
+[[events]]
+id = "event_9"
+scene_id = "scene_3"
+description = """
+勇者不理會長老的話，繼續在村莊中閒逛。故事結束。
+"""
+is_ending = true
+
+[[events]]
+id = "event_10"
+scene_id = "scene_1"
+description = """
+勇者在森林中找到了一本古書，書中記載了關於魔法石的秘密。
+"""
+choices = [
+    { text = "閱讀古書", next_event_id = "event_11" }
+]
+
+[[events]]
+id = "event_11"
+scene_id = "scene_2"
+description = """
+根據古書的指引，勇者來到了古老城堡，開始尋找魔法石。
+"""
+choices = [
+    { text = "在城堡中探索", next_event_id = "event_5" }
+]

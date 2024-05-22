@@ -30,7 +30,7 @@ int initialize_window(){
         return FALSE;
     }
     window = SDL_CreateWindow(
-        NULL, 
+        "Game Window", 
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         WINDOW_WIDTH,
@@ -108,14 +108,18 @@ void destroy_window(){
     SDL_Quit();
 }
 int main(int argc, char *argv[]){
+    printf("Hello World\n");
     game_is_running = initialize_window();
-    
+    if(!game_is_running){
+        return 1;
+    }
+
     setup();
 
     while(game_is_running){
-        process_input();
-        update();
-        render();
+        // process_input();
+        // update();
+        // render();
     }
 
     destroy_window();

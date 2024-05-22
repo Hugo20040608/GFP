@@ -3,11 +3,12 @@
 #include <stdint.h>
 #include <string.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #define TRUE 1
 #define FALSE 0
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
 #define FPS 30
 #define FRAME_TARGET_TIME (1000 / FPS)
 
@@ -21,6 +22,7 @@ struct ball{
 int game_is_running = FALSE; 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
+SDL_Texture *texture = NULL;
 
 int last_frame_time = 0;
 
@@ -53,6 +55,20 @@ void setup(){
     ball.y = 200;
     ball.width = 100;
     ball.height = 100;
+
+    SDL_Surface* surface = IMG_Load("img/manor_gate.jpg");
+    if (!surface) {
+        printf("Error creating surface: %s\n", IMG_GetError());
+        return;
+    }
+
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (!texture) {
+        printf("Error creating texture: %s\n", SDL_GetError());
+        return;
+    }
+
+    SDL_FreeSurface(surface);
 }
 void process_input(){
     SDL_Event event;
@@ -89,7 +105,13 @@ void update(){
 void render(){
     SDL_SetRenderDrawColor(renderer, 110, 120, 170, 165);
     SDL_RenderClear(renderer);
-    
+
+    SDL_Rect rect_img = {
+        0,
+        0,
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT
+    };
     // Draw before present
     SDL_Rect rect_ball = {
         ball.x,
@@ -97,18 +119,19 @@ void render(){
         ball.width,
         ball.height
     };
+    SDL_RenderCopy(renderer, texture, NULL, &rect_img);
     SDL_SetRenderDrawColor(renderer,189, 254, 37, 255);
     SDL_RenderFillRect(renderer, &rect_ball);
 
     SDL_RenderPresent(renderer);
 }
 void destroy_window(){
+    SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
 int main(int argc, char *argv[]){
-    printf("Hello World\n");
     game_is_running = initialize_window();
     if(!game_is_running){
         return 1;
@@ -117,9 +140,9 @@ int main(int argc, char *argv[]){
     setup();
 
     while(game_is_running){
-        // process_input();
-        // update();
-        // render();
+        process_input();
+        update();
+        render();
     }
 
     destroy_window();

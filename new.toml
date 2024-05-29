@@ -70,6 +70,11 @@
     scene_id = "scene_1"
     character_id = "character_2"
     description = "勇者發現聲音的來源是一位神秘老人。老人告訴他，森林中藏著一顆改變命運的魔法石。"
+    dialogue = [
+    { character_id = "character_1", text = "這位老人家，請問您剛才說的魔法石是什麼？" },
+    { character_id = "character_2", text = "這顆魔法石能改變命運，但它藏在一個危險的地方。" },
+    { character_id = "character_1", text = "我願意去尋找，只要能幫助這個世界。" }
+    ]
     choices = [
         { text = "相信老人，去尋找魔法石", next_event_id = "event_4" },
         { text = "不相信老人，繼續前進", next_event_id = "event_3" }
@@ -85,6 +90,9 @@
     id = "event_4"
     scene_id = "scene_2"
     description = "勇者按照老人的指引來到了古老的城堡，開始尋找魔法石。"
+    dialogue = [
+    { character_id = "character_1", text = "這裡就是老人說的城堡，魔法石真的會在這裡嗎？" }
+    ]
     choices = [
         { text = "在城堡中探索", next_event_id = "event_5" },
         { text = "離開城堡", next_event_id = "event_6" }
@@ -95,6 +103,9 @@
     scene_id = "scene_2"
     item_id = "item_1"
     description = "勇者在城堡中找到了魔法石，他的命運從此改變。故事結束。"
+    dialogue = [
+    { character_id = "character_1", text = "這就是魔法石！它的力量真是不可思議。" }
+    ]
     is_ending = true
 
     [event_6]
@@ -108,6 +119,10 @@
     scene_id = "scene_3"
     character_id = "character_3"
     description = "勇者來到村莊廣場，遇見了村莊長老。長老告訴他關於魔法石的傳說。"
+    dialogue = [
+    { character_id = "character_1", text = "長老，您聽說過魔法石的傳說嗎？" },
+    { character_id = "character_3", text = "是的，勇者。據說它被藏在古老城堡的地下室。" }
+    ]
     choices = [
         { text = "詢問魔法石的下落", next_event_id = "event_8" },
         { text = "不理會長老的話", next_event_id = "event_9" }
@@ -117,6 +132,11 @@
     id = "event_8"
     scene_id = "scene_3"
     description = "長老告訴勇者，魔法石被藏在古老城堡的地下室。勇者決定前往城堡。"
+    dialogue = [
+    { character_id = "character_1", text = "謝謝您，長老。我會前往城堡尋找魔法石。" },
+    { character_id = "character_3", text = "祝你好運，勇者。希望你能成功。" }
+    ]
+
     choices = [
         { text = "前往城堡", next_event_id = "event_4" }
     ]
@@ -131,6 +151,9 @@
     id = "event_10"
     scene_id = "scene_1"
     description = "勇者在森林中找到了一本古書，書中記載了關於魔法石的秘密。"
+    dialogue = [
+    { character_id = "character_1", text = "這本古書記載了魔法石的秘密，也許這是個線索。" }
+    ]
     choices = [
         { text = "閱讀古書", next_event_id = "event_11" }
     ]
@@ -139,6 +162,9 @@
     id = "event_11"
     scene_id = "scene_2"
     description = "根據古書的指引，勇者來到了古老城堡，開始尋找魔法石。"
+    dialogue = [
+    { character_id = "character_1", text = "古書說魔法石在城堡內，我必須找到它。" }
+    ]
     choices = [
         { text = "在城堡中探索", next_event_id = "event_5" }
     ]

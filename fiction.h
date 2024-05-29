@@ -9,3 +9,4 @@
 #include "fiction.h"
 
 char *background_switch(char *event);
+char *event_description(char *event)

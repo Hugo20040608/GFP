@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+// #include <SDL2/SDL.h>
+// #include <SDL2/SDL_image.h>
 #include "toml.h"
 #include "fiction.h"
 
-void background_switch(char *event)
+char *background_switch(char *event)
 {
     FILE *fp = fopen("new.toml", "r");
     char errbuf[200];
@@ -15,27 +15,27 @@ void background_switch(char *event)
     if (index == 0)
     {
         printf("Error: %s\n", errbuf);
-        return 1;
+        return NULL;
     }
     toml_table_t* event_table = toml_table_in(index, "events");
     if (event == 0)
     {
         printf("Error: %s\n", "events not found");
-        return 1;
+        return NULL;
     }
     toml_table_t* target_event = toml_table_in(event_table, event);
     if (target_event == 0)
     {
         printf("Error: %s\n", "event not found");
-        return 1;
+        return NULL;
     }
     toml_datum_t background = toml_string_in(target_event, "scene_id");
     if (!background.ok)
     {
         printf("Error: %s\n", "scene_id not found");
-        return 1;
+        return NULL;
     }
-    SDL_Surface* surface = IMG_Load("img/%s", background.u.s);
+    printf("%s\n", background.u.s);
 
-    return;
+    return background.u.s;
 }

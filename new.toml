@@ -56,7 +56,7 @@
 
 # 劇情和對話設定
 [events]
-    [event_1]
+    [events.event_1]
     id = "event_1"
     scene_id = "ancientbook.jpg"
     description = "勇者走進神秘的森林，突然聽到一個低沉的聲音。"

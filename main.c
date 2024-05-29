@@ -4,6 +4,7 @@
 #include <string.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -23,6 +24,8 @@ int game_is_running = FALSE;
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Texture *texture = NULL;
+TTF_Font* font = NULL;
+SDL_Texture* textTexture = NULL;
 
 int last_frame_time = 0;
 
@@ -51,10 +54,10 @@ int initialize_window(){
     return TRUE;
 }
 void setup(){
-    ball.x = 200;
-    ball.y = 200;
-    ball.width = 100;
-    ball.height = 100;
+    ball.x = 0.05 * WINDOW_WIDTH;
+    ball.y = 0.7 * WINDOW_HEIGHT;
+    ball.width = 0.9 * WINDOW_WIDTH;
+    ball.height = 0.2 * WINDOW_HEIGHT;
 
     SDL_Surface* surface = IMG_Load("img/manor_gate.jpg");
     if (!surface) {
@@ -67,7 +70,27 @@ void setup(){
         printf("Error creating texture: %s\n", SDL_GetError());
         return;
     }
+    TTF_Init();
+    font = TTF_OpenFont("OpenSans-Regular.ttf", 24);
+    if (!font) {
+        printf("Error loading font: %s\n", TTF_GetError());
+        return;
+    }
 
+    SDL_Color color = {255, 255, 255, 255};  // white color
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, "my name is ...", color);
+    if (!textSurface) {
+        printf("Error creating text surface: %s\n", TTF_GetError());
+        return;
+    }
+
+    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    if (!textTexture) {
+        printf("Error creating text texture: %s\n", SDL_GetError());
+        return;
+    }
+
+    SDL_FreeSurface(textSurface);
     SDL_FreeSurface(surface);
 }
 void process_input(){
@@ -88,23 +111,23 @@ int change_x = 5;
 int change_y = 5;
 void update(){
     // wait some time 
-    while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
+    // while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
 
-    last_frame_time = SDL_GetTicks();
+    // last_frame_time = SDL_GetTicks();
     
-    if(ball.x >= WINDOW_WIDTH - ball.width || ball.x <= 0){
-        change_x = -change_x;
-    }
+    // if(ball.x >= WINDOW_WIDTH - ball.width || ball.x <= 0){
+    //     change_x = -change_x;
+    // }
 
-    if(ball.y >= WINDOW_HEIGHT - ball.height || ball.y <= 0){
-        change_y = -change_y;
-    }
-    ball.x += change_x;
-    ball.y += change_y;
+    // if(ball.y >= WINDOW_HEIGHT - ball.height || ball.y <= 0){
+    //     change_y = -change_y;
+    // }
+    // ball.x += change_x;
+    // ball.y += change_y;
 }
 void render(){
-    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 165);
-    SDL_RenderClear(renderer);
+    // SDL_SetRenderDrawColor(renderer, 110, 120, 170, 165);
+    // SDL_RenderClear(renderer);
 
     SDL_Rect rect_img = {
         0,
@@ -120,8 +143,10 @@ void render(){
         ball.height
     };
     SDL_RenderCopy(renderer, texture, NULL, &rect_img);
-    SDL_SetRenderDrawColor(renderer,189, 254, 37, 255);
+    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 255);
     SDL_RenderFillRect(renderer, &rect_ball);
+    SDL_Rect textRect = {100, 800, 200, 50};  // position and size of the text
+    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
     SDL_RenderPresent(renderer);
 }
@@ -130,6 +155,9 @@ void destroy_window(){
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    SDL_DestroyTexture(textTexture);
+    TTF_CloseFont(font);
+    TTF_Quit();
 }
 int main(int argc, char *argv[]){
     game_is_running = initialize_window();

@@ -2,19 +2,19 @@
 
 # 場景定義
 [scenes]
-    [scene_1]
+    [scenes.scene_1]
     id = "scene_1"
     name = "神秘森林"
     background_image = "forest_background.jpg"
     description = "這是一個神秘的森林，光線透過樹葉斑駁地灑在地上。"
 
-    [scene_2]
+    [scenes.scene_2]
     id = "scene_2"
     name = "古老城堡"
     background_image = "castle_background.jpg"
     description = "古老的城堡矗立在山頂，陰森的氣氛讓人不寒而慄。"
 
-    [scene_3]
+    [scenes.scene_3]
     id = "scene_3"
     name = "村莊廣場"
     background_image = "village_background.jpg"
@@ -22,19 +22,19 @@
 
 # 人物定義
 [characters]
-    [character_1]
+    [characters.character_1]
     id = "character_1"
     name = "勇者"
     portrait_image = "hero.jpg"
     description = "勇者是個年輕而勇敢的人，他的目標是拯救世界。"
 
-    [character_2]
+    [characters.charavter_2]
     id = "character_2"
     name = "神秘老人"
     portrait_image = "old_man.jpg"
     description = "神秘的老人似乎知道一些不可告人的秘密。"
 
-    [character_3]
+    [characters.character_3]
     id = "character_3"
     name = "村莊長老"
     portrait_image = "elder.jpg"
@@ -65,7 +65,7 @@
         { text = "無視聲音繼續前進", next_event_id = "event_3" }
     ]
 
-    [event_2]
+    [events.event_2]
     id = "event_2"
     scene_id = "scene_1"
     character_id = "character_2"
@@ -80,13 +80,13 @@
         { text = "不相信老人，繼續前進", next_event_id = "event_3" }
     ]
 
-    [event_3]
+    [events.event_3]
     id = "event_3"
     scene_id = "scene_1"
     description = "勇者無視了聲音，繼續前進，卻不小心掉進了一個陷阱。故事結束。"
     is_ending = true
 
-    [event_4]
+    [events.event_4]
     id = "event_4"
     scene_id = "scene_2"
     description = "勇者按照老人的指引來到了古老的城堡，開始尋找魔法石。"
@@ -98,7 +98,7 @@
         { text = "離開城堡", next_event_id = "event_6" }
     ]
 
-    [event_5]
+    [events.event_5]
     id = "event_5"
     scene_id = "scene_2"
     item_id = "item_1"
@@ -108,13 +108,13 @@
     ]
     is_ending = true
 
-    [event_6]
+    [events.event_6]
     id = "event_6"
     scene_id = "scene_2"
     description = "勇者離開了城堡，回到了森林。故事結束。"
     is_ending = true
 
-    [event_7]
+    [events.event_7]
     id = "event_7"
     scene_id = "scene_3"
     character_id = "character_3"
@@ -128,7 +128,7 @@
         { text = "不理會長老的話", next_event_id = "event_9" }
     ]
 
-    [event_8]
+    [events.event_8]
     id = "event_8"
     scene_id = "scene_3"
     description = "長老告訴勇者，魔法石被藏在古老城堡的地下室。勇者決定前往城堡。"
@@ -141,13 +141,13 @@
         { text = "前往城堡", next_event_id = "event_4" }
     ]
 
-    [event_9]
+    [events.event_9]
     id = "event_9"
     scene_id = "scene_3"
     description = "勇者不理會長老的話，繼續在村莊中閒逛。故事結束。"
     is_ending = true
 
-    [event_10]
+    [events.event_10]
     id = "event_10"
     scene_id = "scene_1"
     description = "勇者在森林中找到了一本古書，書中記載了關於魔法石的秘密。"
@@ -158,7 +158,7 @@
         { text = "閱讀古書", next_event_id = "event_11" }
     ]
 
-    [event_11]
+    [events.event_11]
     id = "event_11"
     scene_id = "scene_2"
     description = "根據古書的指引，勇者來到了古老城堡，開始尋找魔法石。"

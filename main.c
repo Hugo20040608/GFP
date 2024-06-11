@@ -31,6 +31,11 @@ SDL_Texture *texture = NULL;
 TTF_Font* font = NULL;
 SDL_Texture* textTexture = NULL;
 
+char **words;
+int currentWordIndex = 0;
+int totalWords = 0;
+Uint32 start_time = 0;
+
 int last_frame_time = 0;
 
 int initialize_window(){
@@ -57,7 +62,7 @@ int initialize_window(){
     }
     return TRUE;
 }
-
+#include "utf8split.h"
 void setup(){
     SDL_DisplayMode displayMode;
     if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
@@ -93,9 +98,20 @@ void setup(){
         printf("Error creating surface: %s\n", IMG_GetError());
         return;
     }
-    char *textString = calloc(100, sizeof(char));
-    textString = event_description("event_1");
 
+    char *textString = event_description("event_1");
+    // 分割textString
+    int len = strlen(textString);
+    // 確保釋放之前的記憶體
+    if (words != NULL) {
+        for (int i = 0; i < totalWords; i++) {
+            free(words[i]);
+        }
+        free(words);
+    }
+    words = split_utf8_string(textString, &totalWords);
+    currentWordIndex = 0;
+    
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     if (!texture) {
         printf("Error creating texture: %s\n", SDL_GetError());
@@ -107,32 +123,6 @@ void setup(){
         printf("Error loading font: %s\n", TTF_GetError());
         return;
     }
-
-    SDL_Color color = {255, 255, 255, 255};  // white color
-    SDL_Surface* textSurface = TTF_RenderUTF8_Solid(font, textString, color);
-    if (!textSurface) {
-        printf("Error creating text surface: %s\n", TTF_GetError());
-        return;
-    }
-    int textWidth = 0;
-    int textHeight = 0;
-    if (TTF_SizeUTF8(font, textString, &textWidth, &textHeight) != 0) {
-        printf("Error getting text size: %s\n", TTF_GetError());
-        return;
-    }
-    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-    if (!textTexture) {
-        printf("Error creating text texture: %s\n", SDL_GetError());
-        return;
-    }
-    textRect = (SDL_Rect){
-        5*VW,
-        70*VH,
-        textWidth,
-        textHeight
-    };
-
-    SDL_FreeSurface(textSurface);
     SDL_FreeSurface(surface);
 }
 void process_input(){
@@ -154,18 +144,18 @@ int change_y = 5;
 void update(){
     // wait some time 
     // while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
-
-    // last_frame_time = SDL_GetTicks();
-    
-    // if(ball.x >= WINDOW_WIDTH - ball.width || ball.x <= 0){
-    //     change_x = -change_x;
-    // }
-
-    // if(ball.y >= WINDOW_HEIGHT - ball.height || ball.y <= 0){
-    //     change_y = -change_y;
-    // }
-    // ball.x += change_x;
-    // ball.y += change_y;
+    int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - last_frame_time);
+    if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME) {
+        SDL_Delay(time_to_wait);
+    }
+    last_frame_time = SDL_GetTicks();
+    // 這裡調整文字顯示速度，每過100毫秒顯示一個新字元
+    if (SDL_GetTicks() - start_time >= 100) {
+        start_time = SDL_GetTicks();
+        if (currentWordIndex < totalWords) {
+            currentWordIndex++;
+        }
+    }
 }
 void render(){
     // SDL_SetRenderDrawColor(renderer, 110, 120, 170, 165);
@@ -176,9 +166,41 @@ void render(){
     SDL_SetRenderDrawColor(renderer, 110, 120, 170, 0.8 * 255);
     SDL_RenderFillRect(renderer, &rect_ball);
     
+    char *textToRender = calloc(1000, sizeof(char));
+    for (int i = 0; i <= currentWordIndex && i < totalWords; i++) {
+        // printf("words[%d]: %s\n", i, words[i]);
+        strcat(textToRender, words[i]);
+    }
+    SDL_Color color = {255, 255, 255, 255};  // white color
+    // SDL_Surface* textSurface = TTF_RenderUTF8_Solid(font, textString, color);
+    SDL_Surface* textSurface = TTF_RenderUTF8_Solid(font, textToRender, color);
+    
+    if (!textSurface) {
+        printf("Error creating text surface: %s\n", TTF_GetError());
+        return;
+    }
+    int textWidth = 0;
+    int textHeight = 0;
+    if (TTF_SizeUTF8(font, textToRender, &textWidth, &textHeight) != 0) {
+        printf("Error getting text size: %s\n", TTF_GetError());
+        return;
+    }
+    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    if (!textTexture) {
+        printf("Error creating text texture: %s\n", SDL_GetError());
+        return;
+    }
+    textRect = (SDL_Rect){
+        5*VW,
+        70*VH,
+        textWidth,
+        textHeight
+    };
     SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
     SDL_RenderPresent(renderer);
+    free(textToRender);
+    SDL_FreeSurface(textSurface);
 }
 void destroy_window(){
     SDL_DestroyTexture(texture);

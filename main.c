@@ -5,21 +5,25 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include "fiction.h"
 
 #define TRUE 1
 #define FALSE 0
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
 #define FPS 30
 #define FRAME_TARGET_TIME (1000 / FPS)
-
+double WINDOW_WIDTH = 1920;
+double WINDOW_HEIGHT = 1080;
+#define VW WINDOW_WIDTH / 100
+#define VH WINDOW_HEIGHT / 100
 struct ball{
     int x;
     int y;
     int width;
     int height;
 } ball;
-
+SDL_Rect rect_ball;
+SDL_Rect textRect;
+SDL_Rect rect_img;
 int game_is_running = FALSE; 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
@@ -53,17 +57,44 @@ int initialize_window(){
     }
     return TRUE;
 }
+
 void setup(){
-    ball.x = 0.05 * WINDOW_WIDTH;
-    ball.y = 0.7 * WINDOW_HEIGHT;
+    SDL_DisplayMode displayMode;
+    if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
+        SDL_Log("Could not get display mode: %s", SDL_GetError());
+        // handle error here
+    } else {
+        WINDOW_WIDTH = displayMode.w;
+        WINDOW_HEIGHT = displayMode.h;
+    }
+    ball.x = 5 * VW;
+    ball.y = 70 * VH;
     ball.width = 0.9 * WINDOW_WIDTH;
     ball.height = 0.2 * WINDOW_HEIGHT;
-
-    SDL_Surface* surface = IMG_Load("img/manor_gate.jpg");
+    rect_ball = (SDL_Rect){
+        ball.x,
+        ball.y,
+        ball.width,
+        ball.height
+    };
+    rect_img = (SDL_Rect){
+        0,
+        0,
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT
+    };
+    char *backgroundString = calloc(100, sizeof(char));
+    backgroundString = background_switch("event_1");
+    // char *backgroundString = "img/manor_gate.jpg";
+    char filePath[128];
+    snprintf(filePath, sizeof(filePath), "img/%s", backgroundString);
+    SDL_Surface* surface = IMG_Load(filePath); 
     if (!surface) {
         printf("Error creating surface: %s\n", IMG_GetError());
         return;
     }
+    char *textString = calloc(100, sizeof(char));
+    textString = event_description("event_1");
 
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     if (!texture) {
@@ -71,24 +102,35 @@ void setup(){
         return;
     }
     TTF_Init();
-    font = TTF_OpenFont("OpenSans-Regular.ttf", 24);
+    font = TTF_OpenFont("NotoSansTC.ttf", 24);
     if (!font) {
         printf("Error loading font: %s\n", TTF_GetError());
         return;
     }
 
     SDL_Color color = {255, 255, 255, 255};  // white color
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, "my name is ...", color);
+    SDL_Surface* textSurface = TTF_RenderUTF8_Solid(font, textString, color);
     if (!textSurface) {
         printf("Error creating text surface: %s\n", TTF_GetError());
         return;
     }
-
+    int textWidth = 0;
+    int textHeight = 0;
+    if (TTF_SizeUTF8(font, textString, &textWidth, &textHeight) != 0) {
+        printf("Error getting text size: %s\n", TTF_GetError());
+        return;
+    }
     textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
     if (!textTexture) {
         printf("Error creating text texture: %s\n", SDL_GetError());
         return;
     }
+    textRect = (SDL_Rect){
+        5*VW,
+        70*VH,
+        textWidth,
+        textHeight
+    };
 
     SDL_FreeSurface(textSurface);
     SDL_FreeSurface(surface);
@@ -128,24 +170,12 @@ void update(){
 void render(){
     // SDL_SetRenderDrawColor(renderer, 110, 120, 170, 165);
     // SDL_RenderClear(renderer);
-
-    SDL_Rect rect_img = {
-        0,
-        0,
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT
-    };
     // Draw before present
-    SDL_Rect rect_ball = {
-        ball.x,
-        ball.y,
-        ball.width,
-        ball.height
-    };
+    
     SDL_RenderCopy(renderer, texture, NULL, &rect_img);
-    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 255);
+    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 0.8 * 255);
     SDL_RenderFillRect(renderer, &rect_ball);
-    SDL_Rect textRect = {100, 800, 200, 50};  // position and size of the text
+    
     SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
 
     SDL_RenderPresent(renderer);

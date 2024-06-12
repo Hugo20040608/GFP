@@ -2,7 +2,7 @@ from openai import OpenAI
 
 client = OpenAI(
     # defaults to os.environ.get("OPENAI_API_KEY")
-    api_key="sk-ituckZpetbxX3IAr0x0xXQ1qWK5ntypJJzdodrgRIO1WRSsp",
+    api_key="MY-KEY",
     base_url="https://api.chatanywhere.tech/v1"
 )
 # 非流式响应

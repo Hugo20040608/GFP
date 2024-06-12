@@ -43,76 +43,35 @@ int initialize_window(){
     return TRUE;
 }
 // setup window
-void setup(){
-    
-
-    SDL_Surface* cursorSurface = SDL_LoadBMP("img/m.bmp");
+void setup_cursor(){
+    SDL_Surface* cursorSurface = SDL_LoadBMP("img/ancientbook.bmp");
     if (!cursorSurface) {
         printf("Unable to load cursor image: %s\n", SDL_GetError());
-        // 可能需要進一步錯誤處理
     }
     else {
         SDL_Cursor* cursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
         if (!cursor) {
             printf("Unable to create cursor: %s\n", SDL_GetError());
         } else {
-            SDL_SetCursor(cursor); // 設定光標
+            SDL_SetCursor(cursor);
         }
-        SDL_FreeSurface(cursorSurface); // 不再需要這個表面
+        SDL_FreeSurface(cursorSurface);
     }
-    
-    ball.x = 5 * VW;
-    ball.y = 70 * VH;
-    ball.width = 0.9 * WINDOW_WIDTH;
-    ball.height = 0.2 * WINDOW_HEIGHT;
-    rect_ball = (SDL_Rect){
-        ball.x,
-        ball.y,
-        ball.width,
-        ball.height
+}
+void setup(){
+    // setup_cursor();
+    rect_dialog_bg = (SDL_Rect){
+        5 * VW,
+        70 * VH,
+        90 * VW,
+        20 * VH
     };
-    rect_img = (SDL_Rect){
+    rect_background = (SDL_Rect){
         0,
         0,
         WINDOW_WIDTH,
         WINDOW_HEIGHT
     };
-    char *backgroundString = calloc(100, sizeof(char));
-    backgroundString = background_switch("event_1");
-    // char *backgroundString = "img/manor_gate.jpg";
-    char filePath[128];
-    snprintf(filePath, sizeof(filePath), "img/%s", backgroundString);
-    SDL_Surface* surface = IMG_Load(filePath); 
-    if (!surface) {
-        printf("Error creating surface: %s\n", IMG_GetError());
-        return;
-    }
-
-    char *textString = event_description("event_1");
-    // 分割textString
-    int len = strlen(textString);
-    // 確保釋放之前的記憶體
-    if (words != NULL) {
-        for (int i = 0; i < totalWords; i++) {
-            free(words[i]);
-        }
-        free(words);
-    }
-    words = split_utf8_string(textString, &totalWords);
-    currentWordIndex = 0;
-    
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
-    if (!texture) {
-        printf("Error creating texture: %s\n", SDL_GetError());
-        return;
-    }
-    TTF_Init();
-    font = TTF_OpenFont("NotoSansTC.ttf", 24);
-    if (!font) {
-        printf("Error loading font: %s\n", TTF_GetError());
-        return;
-    }
-    SDL_FreeSurface(surface);
 }
 // process input
 void process_input(){
@@ -131,39 +90,74 @@ void process_input(){
     }
 }
 // update window
-void update(){
-    // wait some time 
-    // while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
+void update_words(){
+    
+}
+// render window
+void render_background(){
+    char *backgroundString = get_background("event_1");
+    // char *backgroundString = "img/manor_gate.jpg";
+    char filePath[128];
+    snprintf(filePath, sizeof(filePath), "img/%s", backgroundString);
+    SDL_Surface* surface = IMG_Load(filePath); 
+    if (!surface) {
+        printf("Error creating surface: %s\n", IMG_GetError());
+        return;
+    }
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (!texture) {
+        printf("Error creating texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(surface); // Make sure to free the surface before returning
+        return;
+    }
+    SDL_RenderCopy(renderer, texture, NULL, &rect_background);
+    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 0.8 * 255);
+    
+    SDL_RenderPresent(renderer);
+
+    SDL_FreeSurface(surface);
+}
+// render window
+void render_description_bg(){
+
+}
+void render_description(){
+    SDL_RenderFillRect(renderer, &rect_dialog_bg);
+
+    // Update logic integrated here
     int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - last_frame_time);
     if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME) {
         SDL_Delay(time_to_wait);
     }
     last_frame_time = SDL_GetTicks();
-    // 這裡調整文字顯示速度，每過100毫秒顯示一個新字元
-    if (SDL_GetTicks() - start_time >= 30) {
+    // Adjust text display speed, every 100 milliseconds display a new character
+    if (SDL_GetTicks() - start_time >= 100) {
         start_time = SDL_GetTicks();
         if (currentWordIndex < totalWords) {
             currentWordIndex++;
         }
     }
-}
-// render window
-void render(){
-    // SDL_SetRenderDrawColor(renderer, 110, 120, 170, 165);
-    // SDL_RenderClear(renderer);
-    // Draw before present
+    char *textString = background_description("event_1");
+    int len = strlen(textString);
+    if (words != NULL) {
+        for (int i = 0; i < totalWords; i++) {
+            free(words[i]);
+        }
+        free(words);
+    }
+    words = split_utf8_string(textString, &totalWords);
     
-    SDL_RenderCopy(renderer, texture, NULL, &rect_img);
-    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 0.8 * 255);
-    SDL_RenderFillRect(renderer, &rect_ball);
-    
+    TTF_Init();
+    font = TTF_OpenFont("NotoSansTC.ttf", 24);
+    if (!font) {
+        printf("Error loading font: %s\n", TTF_GetError());
+        return;
+    }
     char *textToRender = calloc(1000, sizeof(char));
     for (int i = 0; i <= currentWordIndex && i < totalWords; i++) {
-        // printf("words[%d]: %s\n", i, words[i]);
         strcat(textToRender, words[i]);
     }
     SDL_Color color = {255, 255, 255, 255};  // white color
-    // SDL_Surface* textSurface = TTF_RenderUTF8_Solid(font, textString, color);
     SDL_Surface* textSurface = TTF_RenderUTF8_Solid(font, textToRender, color);
     
     if (!textSurface) {
@@ -188,11 +182,20 @@ void render(){
         textHeight
     };
     SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-
     SDL_RenderPresent(renderer);
     free(textToRender);
     SDL_FreeSurface(textSurface);
 }
+// void render_character(){
+//     char *characterString = character_switch("event_1");
+//     // char *characterString = "img/character.png";
+//     snprintf(filePath, sizeof(filePath), "img/%s", characterString);
+//     SDL_Surface* characterSurface = IMG_Load(filePath);
+//     if (!characterSurface) {
+//         printf("Error creating character surface: %s\n", IMG_GetError());
+//         return;
+//     }
+// }
 // destroy window
 void destroy_window(){
     SDL_DestroyTexture(texture);
@@ -210,10 +213,20 @@ int main(int argc, char *argv[]){
         return 1;
     }
     setup();
+    char event[128] = "event_1";
     while(game_is_running){
+        render_background(event); // check
+        render_description(event); // check
+        // if(character_is_visible(event))
+        //     render_character(event); // update();
+        // if (diaolog_is_visible(event))
+        //     render_dialog(event);
+        // if(endding)
+        //     game_is_running = FALSE;
+        // render_choice();
         process_input();
-        update();
-        render();
+        // 找下一個event
+        update_words();
     }
     destroy_window();
     return 0;

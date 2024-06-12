@@ -9,7 +9,7 @@ int main()
 {
     puts("---This is a example of how to print array ( get_array_type )---");
     char *event = "event_2";
-    toml_array_t *dialogue = get_array_type(event);
+    toml_array_t *dialogue = get_dialogue_array(event);
     if (dialogue == 0)
     {
         printf("Error: %s\n", "dialogue not found");

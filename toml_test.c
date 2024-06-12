@@ -2,64 +2,35 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "fiction.h"
 #include "toml.h"
 
 int main()
 {
-    FILE *fp = fopen("test.toml", "r");
-    char errbuf[200];
-    toml_table_t* test = toml_parse_file(fp, errbuf, sizeof(errbuf));
-    if (test == 0)
+    puts("---This is a example of how to print array ( get_array_type )---");
+    char *event = "event_2";
+    toml_array_t *dialogue = get_array_type(event);
+    if (dialogue == 0)
     {
-        printf("Error: %s\n", errbuf);
+        printf("Error: %s\n", "dialogue not found");
         return 1;
     }
-    toml_table_t* characters = toml_table_in(test, "characters");
-    if (characters == 0)
+    for(int32_t i = 0;; i++)
     {
-        printf("Error: %s\n", "characters not found");
-        return 1;
+        toml_table_t *dialogue_table = toml_table_at(dialogue, i);
+        if (dialogue_table == 0)
+        {
+            break;
+        }
+        toml_datum_t character_id = toml_string_in(dialogue_table, "character_id");
+        toml_datum_t text = toml_string_in(dialogue_table, "text");
+        if (!character_id.ok || !text.ok)
+        {
+            printf("Error: %s\n", "character_id or text not found");
+            return 1;
+        }
+        printf("%s: %s\n", character_id.u.s, text.u.s);
     }
-    toml_table_t* heros = toml_table_in(characters, "hero");
-    if (heros == 0)
-    {
-        printf("Error: %s\n", "hero not found");
-        return 1;
-    }
-    toml_datum_t name= toml_string_in(heros, "name");
-    if (!name.ok)
-    {
-        printf("Error: %s\n", "name not found");
-        return 1;
-    }
-    printf("name: %s\n", name.u.s);
-    toml_datum_t description = toml_string_in(heros, "description");
-    if (!description.ok)
-    {
-        printf("Error: %s\n", "description not found");
-        return 1;
-    }
-    printf("description: %s\n", description.u.s);
-    puts("------------------------------------------------------");
-    toml_table_t* scene = toml_table_in(test, "scenes");
-    if (scene == 0)
-    {
-        printf("Error: %s\n", "scene not found");
-        return 1;
-    }
-    toml_table_t* scene1 = toml_table_in(scene, "intro");
-    if (scene1 == 0)
-    {
-        printf("Error: %s\n", "intro not found");
-        return 1;
-    }
-    toml_datum_t scene1_background = toml_string_in(scene1, "background");
-    if (!scene1_background.ok)
-    {
-        printf("Error: %s\n", "background not found");
-        return 1;
-    }
-    printf("scene1_background: %s\n", scene1_background.u.s);
-    
+    puts("----------------------------------------------------------------");
     return 0;
 }

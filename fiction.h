@@ -10,3 +10,4 @@
 
 char *background_switch(char *event);
 char *event_description(char *event);
+toml_array_t *get_array_type(char *event);

@@ -6,6 +6,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include "fiction.h"
+#include "utf8split.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -62,7 +63,7 @@ int initialize_window(){
     }
     return TRUE;
 }
-#include "utf8split.h"
+
 void setup(){
     SDL_DisplayMode displayMode;
     if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
@@ -72,6 +73,22 @@ void setup(){
         WINDOW_WIDTH = displayMode.w;
         WINDOW_HEIGHT = displayMode.h;
     }
+
+    SDL_Surface* cursorSurface = SDL_LoadBMP("img/m.bmp");
+    if (!cursorSurface) {
+        printf("Unable to load cursor image: %s\n", SDL_GetError());
+        // 可能需要進一步錯誤處理
+    }
+    else {
+        SDL_Cursor* cursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
+        if (!cursor) {
+            printf("Unable to create cursor: %s\n", SDL_GetError());
+        } else {
+            SDL_SetCursor(cursor); // 設定光標
+        }
+        SDL_FreeSurface(cursorSurface); // 不再需要這個表面
+    }
+    
     ball.x = 5 * VW;
     ball.y = 70 * VH;
     ball.width = 0.9 * WINDOW_WIDTH;

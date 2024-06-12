@@ -7,42 +7,21 @@
 #include <SDL2/SDL_ttf.h>
 #include "fiction.h"
 #include "utf8split.h"
+#include "constants.h"
 
-#define TRUE 1
-#define FALSE 0
-#define FPS 30
-#define FRAME_TARGET_TIME (1000 / FPS)
-double WINDOW_WIDTH = 1920;
-double WINDOW_HEIGHT = 1080;
-#define VW WINDOW_WIDTH / 100
-#define VH WINDOW_HEIGHT / 100
-struct ball{
-    int x;
-    int y;
-    int width;
-    int height;
-} ball;
-SDL_Rect rect_ball;
-SDL_Rect textRect;
-SDL_Rect rect_img;
-int game_is_running = FALSE; 
-SDL_Window *window = NULL;
-SDL_Renderer *renderer = NULL;
-SDL_Texture *texture = NULL;
-TTF_Font* font = NULL;
-SDL_Texture* textTexture = NULL;
-
-char **words;
-int currentWordIndex = 0;
-int totalWords = 0;
-Uint32 start_time = 0;
-
-int last_frame_time = 0;
-
+// initialize window
 int initialize_window(){
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0){
         printf("Error initializing SDL: %s\n", SDL_GetError());
         return FALSE;
+    }
+    SDL_DisplayMode displayMode;
+    if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
+        SDL_Log("Could not get display mode: %s", SDL_GetError());
+        // handle error here
+    } else {
+        WINDOW_WIDTH = displayMode.w;
+        WINDOW_HEIGHT = displayMode.h;
     }
     window = SDL_CreateWindow(
         "Game Window", 
@@ -63,16 +42,9 @@ int initialize_window(){
     }
     return TRUE;
 }
-
+// setup window
 void setup(){
-    SDL_DisplayMode displayMode;
-    if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
-        SDL_Log("Could not get display mode: %s", SDL_GetError());
-        // handle error here
-    } else {
-        WINDOW_WIDTH = displayMode.w;
-        WINDOW_HEIGHT = displayMode.h;
-    }
+    
 
     SDL_Surface* cursorSurface = SDL_LoadBMP("img/m.bmp");
     if (!cursorSurface) {
@@ -142,6 +114,7 @@ void setup(){
     }
     SDL_FreeSurface(surface);
 }
+// process input
 void process_input(){
     SDL_Event event;
     SDL_PollEvent(&event);
@@ -153,11 +126,11 @@ void process_input(){
         case SDL_KEYDOWN: // key press
             if(event.key.keysym.sym == SDLK_ESCAPE)
                 game_is_running = FALSE;
+            
             break;
     }
 }
-int change_x = 5;
-int change_y = 5;
+// update window
 void update(){
     // wait some time 
     // while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
@@ -167,13 +140,14 @@ void update(){
     }
     last_frame_time = SDL_GetTicks();
     // 這裡調整文字顯示速度，每過100毫秒顯示一個新字元
-    if (SDL_GetTicks() - start_time >= 100) {
+    if (SDL_GetTicks() - start_time >= 30) {
         start_time = SDL_GetTicks();
         if (currentWordIndex < totalWords) {
             currentWordIndex++;
         }
     }
 }
+// render window
 void render(){
     // SDL_SetRenderDrawColor(renderer, 110, 120, 170, 165);
     // SDL_RenderClear(renderer);
@@ -219,6 +193,7 @@ void render(){
     free(textToRender);
     SDL_FreeSurface(textSurface);
 }
+// destroy window
 void destroy_window(){
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
@@ -228,20 +203,18 @@ void destroy_window(){
     TTF_CloseFont(font);
     TTF_Quit();
 }
+// main function
 int main(int argc, char *argv[]){
     game_is_running = initialize_window();
     if(!game_is_running){
         return 1;
     }
-
     setup();
-
     while(game_is_running){
         process_input();
         update();
         render();
     }
-
     destroy_window();
     return 0;
 }

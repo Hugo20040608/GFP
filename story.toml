@@ -1,0 +1,220 @@
+# 劇本檔
+
+# 場景定義
+[scenes]
+    [scenes.scene_1]
+    id = "scene_1"
+    name = "神秘森林"
+    background_image = "forest_background.jpg"
+    description = "這是一個神秘的森林，光線透過樹葉斑駁地灑在地上。"
+
+    [scenes.scene_2]
+    id = "scene_2"
+    name = "古老城堡"
+    background_image = "castle_background.jpg"
+    description = "古老的城堡矗立在山頂，陰森的氣氛讓人不寒而慄。"
+
+    [scenes.scene_3]
+    id = "scene_3"
+    name = "村莊廣場"
+    background_image = "village_background.jpg"
+    description = "這是一個和平的小村莊，村民們在廣場上忙碌著。"
+
+# 人物定義
+[characters]
+    [characters.character_1]
+    id = "character_1"
+    name = "勇者"
+    portrait_image = "hero.jpg"
+    description = "勇者是個年輕而勇敢的人，他的目標是拯救世界。"
+
+    [characters.charavter_2]
+    id = "character_2"
+    name = "神秘老人"
+    portrait_image = "old_man.jpg"
+    description = "神秘的老人似乎知道一些不可告人的秘密。"
+
+    [characters.character_3]
+    id = "character_3"
+    name = "村莊長老"
+    portrait_image = "elder.jpg"
+    description = "村莊的長老，擁有豐富的智慧和經驗。"
+
+# 物品定義
+[items]
+    [item_1]
+    id = "item_1"
+    name = "魔法石"
+    icon_image = "magicstone.jpg"
+    description = "這是一顆閃爍著藍光的魔法石，據說能改變命運。"
+
+    [item_2]
+    id = "item_2"
+    name = "古書"
+    icon_image = "ancientbook.jpg"
+    description = "一本古老的書籍，裡面記載了許多失傳的秘術。"
+
+[events]
+    [events.event_1]
+    id = "event_1"
+    scene_id = "scene_1"
+    description = "上級派勇者去完成一個極限任務：尋找魔法石，勇者開啟旅程，走進神秘森林聽到低沈聲音，又見到一個人影。"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "尋找聲音的來源", next_event_id = "event_3" },
+        { text = "跟隨人影", next_event_id = "event_2" }
+    ]
+
+    [events.event_2]
+    id = "event_2"
+    scene_id = "scene_1"
+    character_id = "character_2"
+    amount_choice = "2"
+    amount_dialogue = "4"
+    description = "勇者發現聲音的來源是一位神秘老人。老人告訴他，在古老城堡裡的一個古書記載著魔法石的線索。"
+    dialogue = [
+    { character_id = "character_1", text = "這位老人家，請問您剛才說的魔法石是什麼？" },
+    { character_id = "character_2", text = "這顆魔法石能改變命運，但它藏在一個危險的地方，但你需要先到城堡需找線索。" },
+    { character_id = "character_1", text = "我願意去尋找，只要能幫助這個世界，等等你還沒告訴我在哪個城堡！" },
+    { character_id = "character_2", text = "不過我也不清楚是東城還是西城，我直覺感覺是東城。" }
+    ]
+    choices = [
+        { text = "相信老人，選擇東邊的那座城綁前往", next_event_id = "event_4" },
+        { text = "不相信老人，選擇往西邊的那座城前往", next_event_id = "event_5" }
+    ]
+
+    [events.event_3]
+    id = "event_3"
+    scene_id = "scene_1"
+    description = "當勇者發現低沈的聲音是來自於熊時，熊已經意識到勇者的存在，並追殺勇者，勇者仍逃不了丟失了生命，旅途結束。"
+    amount_choice = "0"
+    amount_dialogue = "0"
+    is_ending = true
+
+    [events.event_4]
+    id = "event_4"
+    scene_id = "scene_2"
+    description = "勇者按照老人的指引來到了東邊古老的城堡，開始尋找古書。"
+    amount_choice = "2"
+    amount_dialogue = "1"
+    dialogue = [
+    { character_id = "character_1", text = "這裡就是老人說的城堡，古書到底會在哪呢？" }
+    ]
+    choices = [
+        { text = "前往地下室，最隱密的地方", next_event_id = "event_8" },
+        { text = "前往藏書室，古書一定藏在一堆書裡面，最危險的地方最安全", next_event_id = "event_9" }
+    ]
+
+    [events.event_5]
+    id = "event_5"
+    scene_id = "scene_1"
+    description = "在前往西城的路上發現有一把槍及一把刀，為了生命安全斯要一個武器"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "槍", next_event_id = "event_6" },
+        { text = "刀", next_event_id = "event_7" }
+    ]
+
+    [events.event_6]
+    id = "event_6"
+    scene_id = "scene_1"
+    description = "路上遇到遇到一隻熊，但勇者有一把槍，當場斃了牠，不過越走越遠，發現路上足跡越來越少"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "返回走去東城好了", next_event_id = "event_4" },
+        { text = "這就是神秘的原因繼續走", next_event_id = "event_3" }
+    ]
+
+    [events.event_7]
+    id = "event_7"
+    scene_id = "scene_1"
+    description = "路上遇到遇到一隻熊，但勇者只有一把刀不足以與熊抗衡，因此丟失了生命"
+    amount_choice = "0"
+    amount_dialogue = "0"
+    is_ending = true
+
+    [events.event_8]
+    id = "event_8"
+    scene_id = "scene_2"
+    description = "果然找到了！古書記載著要找到魔法石需要先找到鑰匙，可以尋找長老詢問！"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "前往北村", next_event_id = "event_10" },
+        { text = "前往南村", next_event_id = "event_11" }
+    ]
+
+    [events.event_9]
+    id = "event_9"
+    scene_id = "scene_2"
+    description = "藏書是剛好有一名侍衛在看守，一看到有外人出現，直接一槍斃命，勇者因此而喪命。"
+    amount_choice = "0"
+    amount_dialogue = "0"
+    is_ending = true
+
+    [events.event_10]
+    id = "event_10"
+    scene_id = "scene_3"
+    description = "勇者在北村森找到長老，並詢問。"
+    amount_choice = "1"
+    amount_dialogue = "2"
+    key_1 = true
+    dialogue = [
+    { character_id = "character_1", text = "長老！為了完成任務，我在找尋鑰匙的下落" },
+    { character_id = "character_3", text = "你找對人了！就在我這邊，寶箱就在城堡內" },
+    ]
+    choices = [
+        { text = "回到城堡", next_event_id = "event_12" }
+    ]
+
+    [events.event_11]
+    id = "event_11"
+    scene_id = "scene_3"
+    description = "勇者在南村森找到長老，並詢問。"
+    amount_choice = "1"
+    amount_dialogue = "2"
+    key_2 = true
+    dialogue = [
+    { character_id = "character_1", text = "長老！為了完成任務，我在找尋鑰匙的下落" },
+    { character_id = "character_3", text = "你找對人了！就在我這邊，寶箱就在城堡內" },
+    ]
+    choices = [
+        { text = "回到城堡", next_event_id = "event_12" }
+    ]
+
+    [events.event_12]
+    id = "event_12"
+    scene_id = "scene_2"
+    description = "其實需要兩把來自北村和南村的鑰匙才能開寶箱"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "我有！", next_event_id = "event_13" },
+        { text = "再繼續尋找！", next_event_id = "event_14" }
+    ]
+
+    [events.event_13]
+    id = "event_13"
+    scene_id = "scene_2"
+    description = "恭喜你拿到了神秘的寶石！"
+    item = "item_1"
+    amount_choice = "0"
+    amount_dialogue = "0"
+    is_ending = true
+
+
+    [events.event_14]
+    id = "event_14"
+    scene_id = "scene_2"
+    description = "還沒找尋的鑰匙？"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "回到北村", next_event_id = "event_10" },
+        { text = "回到南村", next_event_id = "event_11" }
+    ]
+
+

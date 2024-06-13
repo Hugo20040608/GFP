@@ -14,8 +14,13 @@ void setup();
 void render_background(char *event);
 void render_description(char *event);
 void render_background_character(char *event);
-void process_input();
 void destroy_window();
+void render_dialogue(char *character_id, char *text);
+void render_character(char *character_image);
+void render_text(char *text);
+void render_choice(toml_array_t choices);
+void process_input_space();
+int32_t detect_user_input_number();
 
 int main(int argc, char *argv[]){
     game_is_running = initialize_window();
@@ -23,26 +28,63 @@ int main(int argc, char *argv[]){
         return 1;
     }
     setup();
-    char event[128] = "event_1";
+    char event[128] = "event_1"; // start from event_1
+    // game loop
     while(game_is_running){
+        // part 1 (背景、描述、背景人物)
         render_background(event);
         if(background_character(event) != NULL)
             render_background_character(event);
         while(1){
             render_description(event);
-            if(currentWordIndex >= totalWords)
-            {
-                process_input();
+            if(currentWordIndex >= totalWords){
+                process_input_space();
                 break;
             }
         }
-        // if (diaolog_is_visible(event))
-        //     render_dialog(event);
-        // if(endding)
-        //     game_is_running = FALSE;
-        // render_choice();
-        // process_input();
-        break;
+        // part 2 (對話)
+        toml_array_t dialogue = get_dialogue_array(event);
+        if (dialogue != NULL){
+            for(int32_t i=0;;i++){
+                toml_table_t *dialogue_table = toml_table_at(dialogue, i);
+                if (dialogue_table == 0){
+                    break;
+                }
+                toml_datum_t character_id = toml_string_in(dialogue_table, "character_id");
+                toml_datum_t text = toml_string_in(dialogue_table, "text");
+                if (!character_id.ok || !text.ok){
+                    printf("Error: %s\n", "character_id or text not found");
+                    return 1;
+                }
+                render_dialogue(character_id.u.s, text.u.s);
+                process_input_space();
+            }
+        }
+        if(check_endding(event)){
+            game_is_running = FALSE;
+            break;
+        }
+        // part 3 (選項)
+        int32_t choice = 0;
+        toml_array_t choices = get_choices_array(event);
+        if (choices != NULL){
+            render_choice(choices);
+            choice = detect_user_input_number();
+        }
+        // part 4 (選擇後的事件)
+        toml_table_t *choice_table = toml_table_at(choices, choice-1);
+        if (choice_table != NULL){
+            toml_datum_t next_event_datum = toml_string_in(choice_table, "next_event_id");
+            if (!next_event_datum.ok){
+                // printf("Error: %s\n", "next_event not found");
+                return 0;
+            }
+            strcpy(event, next_event_datum.u.s);
+        }
+        else{
+            game_is_running = FALSE;
+            break;
+        }
     }
     destroy_window();
     return 0;
@@ -114,7 +156,7 @@ void setup(){
     };
 }
 // process input
-void process_input(){
+void process_input_space(){
     SDL_Event event; // occur in the application, such as a key press or a mouse movement
     int32_t condition=0;
     while(1)
@@ -160,6 +202,56 @@ void render_background(char *event){
 }
 // render description
 void render_description(char *event){
+    render_text(event_description(event));
+}
+// render character
+void render_background_character(char *event){
+    render_character(background_character(event));
+}
+// destroy window
+void destroy_window(){
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    SDL_DestroyTexture(textTexture);
+    TTF_CloseFont(font);
+    TTF_Quit();
+}
+
+void render_dialogue(char *character_id, char *text){
+    // render character
+    render_character(get_character_image(character_id));
+    // render text
+    render_text(text);
+}
+
+void render_character(char *character_image){
+    char filePath[128];
+    snprintf(filePath, sizeof(filePath), "img/%s", character_image);
+    SDL_Surface* characterSurface = IMG_Load(filePath);
+    if (!characterSurface) {
+        printf("Error creating character surface: %s\n", IMG_GetError());
+        return;
+    }
+    SDL_Texture* characterTexture = SDL_CreateTextureFromSurface(renderer, characterSurface);
+    if (!characterTexture) {
+        printf("Error creating character texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(characterSurface); // Make sure to free the surface before returning
+        return;
+    }
+    SDL_Rect characterRect = (SDL_Rect){
+        40*VW,
+        20*VH,
+        20*VW,
+        20*VH
+    };
+    SDL_RenderCopy(renderer, characterTexture, NULL, &characterRect);
+    SDL_RenderPresent(renderer);
+    SDL_FreeSurface(characterSurface);
+}
+
+void render_text(char *text){
     SDL_SetRenderDrawColor(renderer, 110, 120, 170, 0.8 * 255); // light blue color
     SDL_RenderFillRect(renderer, &rect_dialog_bg);
     // Update logic integrated here
@@ -175,15 +267,14 @@ void render_description(char *event){
             currentWordIndex++;
         }
     }
-    char *textString = event_description(event);
-    int len = strlen(textString);
+    int len = strlen(text);
     if (words != NULL) {
         for (int i = 0; i < totalWords; i++) {
             free(words[i]);
         }
         free(words);
     }
-    words = split_utf8_string(textString, &totalWords);
+    words = split_utf8_string(text, &totalWords);
     
     TTF_Init();
     font = TTF_OpenFont("NotoSansTC.ttf", 24);
@@ -224,39 +315,44 @@ void render_description(char *event){
     free(textToRender);
     SDL_FreeSurface(textSurface);
 }
-// render character
-void render_background_character(char *event){
-    char *characterString = background_character(event);
-    char filePath[128];
-    snprintf(filePath, sizeof(filePath), "img/%s", characterString);
-    SDL_Surface* characterSurface = IMG_Load(filePath);
-    if (!characterSurface) {
-        printf("Error creating character surface: %s\n", IMG_GetError());
-        return;
+
+void render_choice(toml_array_t choices){
+    // 把選項連結起來，並且加上選項編號和換行符號
+    char choice_string[1000]={0};
+    char index[10]={0};
+    for(int32_t i=0;;i++){
+        toml_table_t *choice_table = toml_table_at(choices, i);
+        if (choice_table == 0){
+            break;
+        }
+        toml_datum_t choice = toml_string_in(choice_table, "choice");
+        if (!choice.ok){
+            printf("Error: %s\n", "choice not found");
+            return;
+        }
+        snprintf(index, sizeof(index), "(%d)", i+1);
+        strcat(choice_string, index);
+        strcat(choice_string, choice.u.s);
+        strcat(choice_string, "\n");
     }
-    SDL_Texture* characterTexture = SDL_CreateTextureFromSurface(renderer, characterSurface);
-    if (!characterTexture) {
-        printf("Error creating character texture: %s\n", SDL_GetError());
-        SDL_FreeSurface(characterSurface); // Make sure to free the surface before returning
-        return;
-    }
-    SDL_Rect characterRect = (SDL_Rect){
-        40*VW,
-        20*VH,
-        20*VW,
-        20*VH
-    };
-    SDL_RenderCopy(renderer, characterTexture, NULL, &characterRect);
-    SDL_RenderPresent(renderer);
-    SDL_FreeSurface(characterSurface);
+    render_text(choice_string);
 }
-// destroy window
-void destroy_window(){
-    SDL_DestroyTexture(texture);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    SDL_DestroyTexture(textTexture);
-    TTF_CloseFont(font);
-    TTF_Quit();
+
+int32_t detect_user_input_number(){
+    SDL_Event event;
+    int number = 0;
+    int isNumberEntered = 0;
+
+    while (!isNumberEntered) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym >= SDLK_0 && event.key.keysym.sym <= SDLK_9) {
+                    number = event.key.keysym.sym - SDLK_0;
+                    isNumberEntered = 1;
+                }
+            }
+        }
+    }
+
+    return number;
 }

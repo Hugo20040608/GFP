@@ -8,6 +8,7 @@
 #include "fiction.h"
 #include "utf8split.h"
 #include "constants.h"
+#include "music.h"
 
 int32_t initialize_window();
 void setup();
@@ -23,6 +24,7 @@ int main(int argc, char *argv[]){
         return 1;
     }
     setup();
+    play_music();
     char event[128] = "event_1";
     while(game_is_running){
         render_background(event);
@@ -45,6 +47,7 @@ int main(int argc, char *argv[]){
         break;
     }
     destroy_window();
+    free_music();
     return 0;
 }
 

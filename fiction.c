@@ -228,3 +228,35 @@ char *get_character_image(char *character)
     fclose(fp);
     return image.u.s;
 }
+
+int32_t check_endding(char *event)
+{
+    FILE *fp = fopen("new.toml", "r");
+    char errbuf[200];
+    toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
+    if (index == 0)
+    {
+        printf("Error: %s\n", errbuf);
+        return 1;
+    }
+    toml_table_t* event_table = toml_table_in(index, "events");
+    if (event == 0)
+    {
+        printf("Error: %s\n", "events not found");
+        return 1;
+    }
+    toml_table_t* target_event = toml_table_in(event_table, event);
+    if (target_event == 0)
+    {
+        printf("Error: %s\n", "event not found");
+        return 1;
+    }
+    toml_datum_t endding = toml_int_in(target_event, "endding");
+    if (!endding.ok)
+    {
+        // printf("Error: %s\n", "endding not found");
+        return 0;
+    }
+    fclose(fp);
+    return endding.u.i;
+}

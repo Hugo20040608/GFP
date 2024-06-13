@@ -8,6 +8,7 @@
 #include "fiction.h"
 #include "utf8split.h"
 #include "constants.h"
+#include "toml.h"
 
 int32_t initialize_window();
 void setup();
@@ -18,7 +19,7 @@ void destroy_window();
 void render_dialogue(char *character_id, char *text);
 void render_character(char *character_image);
 void render_text(char *text);
-void render_choice(toml_array_t choices);
+void render_choice(toml_array_t *choices);
 void process_input_space();
 int32_t detect_user_input_number();
 
@@ -43,7 +44,7 @@ int main(int argc, char *argv[]){
             }
         }
         // part 2 (對話)
-        toml_array_t dialogue = get_dialogue_array(event);
+        toml_array_t *dialogue = get_dialogue_array(event);
         if (dialogue != NULL){
             for(int32_t i=0;;i++){
                 toml_table_t *dialogue_table = toml_table_at(dialogue, i);
@@ -66,7 +67,7 @@ int main(int argc, char *argv[]){
         }
         // part 3 (選項)
         int32_t choice = 0;
-        toml_array_t choices = get_choices_array(event);
+        toml_array_t *choices = get_choices_array(event);
         if (choices != NULL){
             render_choice(choices);
             choice = detect_user_input_number();
@@ -124,21 +125,21 @@ int32_t initialize_window(){
     return TRUE;
 }
 // setup window
-void setup_cursor(){
-    SDL_Surface* cursorSurface = SDL_LoadBMP("img/ancientbook.bmp");
-    if (!cursorSurface) {
-        printf("Unable to load cursor image: %s\n", SDL_GetError());
-    }
-    else {
-        SDL_Cursor* cursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
-        if (!cursor) {
-            printf("Unable to create cursor: %s\n", SDL_GetError());
-        } else {
-            SDL_SetCursor(cursor);
-        }
-        SDL_FreeSurface(cursorSurface);
-    }
-}
+// void setup_cursor(){
+//     SDL_Surface* cursorSurface = SDL_LoadBMP("img/ancientbook.bmp");
+//     if (!cursorSurface) {
+//         printf("Unable to load cursor image: %s\n", SDL_GetError());
+//     }
+//     else {
+//         SDL_Cursor* cursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
+//         if (!cursor) {
+//             printf("Unable to create cursor: %s\n", SDL_GetError());
+//         } else {
+//             SDL_SetCursor(cursor);
+//         }
+//         SDL_FreeSurface(cursorSurface);
+//     }
+// }
 // setup window
 void setup(){
     // setup_cursor();
@@ -316,7 +317,7 @@ void render_text(char *text){
     SDL_FreeSurface(textSurface);
 }
 
-void render_choice(toml_array_t choices){
+void render_choice(toml_array_t *choices){
     // 把選項連結起來，並且加上選項編號和換行符號
     char choice_string[1000]={0};
     char index[10]={0};
@@ -325,9 +326,9 @@ void render_choice(toml_array_t choices){
         if (choice_table == 0){
             break;
         }
-        toml_datum_t choice = toml_string_in(choice_table, "choice");
+        toml_datum_t choice = toml_string_in(choice_table, "text");
         if (!choice.ok){
-            printf("Error: %s\n", "choice not found");
+            // printf("Error: %s\n", "choice not found");
             return;
         }
         snprintf(index, sizeof(index), "(%d)", i+1);

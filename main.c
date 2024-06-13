@@ -9,8 +9,47 @@
 #include "utf8split.h"
 #include "constants.h"
 
+int32_t initialize_window();
+void setup();
+void render_background(char *event);
+void render_description(char *event);
+void render_background_character(char *event);
+void process_input();
+void destroy_window();
+
+int main(int argc, char *argv[]){
+    game_is_running = initialize_window();
+    if(!game_is_running){
+        return 1;
+    }
+    setup();
+    char event[128] = "event_1";
+    while(game_is_running){
+        render_background(event);
+        if(background_character(event) != NULL)
+            render_background_character(event);
+        while(1){
+            render_description(event);
+            if(currentWordIndex >= totalWords)
+            {
+                process_input();
+                break;
+            }
+        }
+        // if (diaolog_is_visible(event))
+        //     render_dialog(event);
+        // if(endding)
+        //     game_is_running = FALSE;
+        // render_choice();
+        // process_input();
+        break;
+    }
+    destroy_window();
+    return 0;
+}
+
 // initialize window
-int initialize_window(){
+int32_t initialize_window(){
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0){
         printf("Error initializing SDL: %s\n", SDL_GetError());
         return FALSE;
@@ -58,6 +97,7 @@ void setup_cursor(){
         SDL_FreeSurface(cursorSurface);
     }
 }
+// setup window
 void setup(){
     // setup_cursor();
     rect_dialog_bg = (SDL_Rect){
@@ -75,28 +115,32 @@ void setup(){
 }
 // process input
 void process_input(){
-    SDL_Event event;
-    SDL_PollEvent(&event);
-
-    switch(event.type){
-        case SDL_QUIT: // X button
-            game_is_running = FALSE;
+    SDL_Event event; // occur in the application, such as a key press or a mouse movement
+    int32_t condition=0;
+    while(1)
+    {
+        while(SDL_PollEvent(&event)) // 持續檢查事件
+        {
+            switch(event.type){
+                case SDL_KEYDOWN:
+                    if(event.key.keysym.sym == SDLK_SPACE)
+                        condition = 1;
+                    break;
+            }
+            if(condition)
+            {
+                break;
+            }
+        }
+        if(condition)
+        {
             break;
-        case SDL_KEYDOWN: // key press
-            if(event.key.keysym.sym == SDLK_ESCAPE)
-                game_is_running = FALSE;
-            
-            break;
+        }
     }
 }
-// update window
-void update_words(){
-    
-}
 // render window
-void render_background(){
-    char *backgroundString = get_background("event_1");
-    // char *backgroundString = "img/manor_gate.jpg";
+void render_background(char *event){
+    char *backgroundString = get_background(event);
     char filePath[128];
     snprintf(filePath, sizeof(filePath), "img/%s", backgroundString);
     SDL_Surface* surface = IMG_Load(filePath); 
@@ -110,20 +154,14 @@ void render_background(){
         SDL_FreeSurface(surface); // Make sure to free the surface before returning
         return;
     }
-    SDL_RenderCopy(renderer, texture, NULL, &rect_background);
-    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 0.8 * 255);
-    
+    SDL_RenderCopy(renderer, texture, NULL, &rect_background); 
     SDL_RenderPresent(renderer);
-
     SDL_FreeSurface(surface);
 }
-// render window
-void render_description_bg(){
-
-}
-void render_description(){
+// render description
+void render_description(char *event){
+    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 0.8 * 255); // light blue color
     SDL_RenderFillRect(renderer, &rect_dialog_bg);
-
     // Update logic integrated here
     int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - last_frame_time);
     if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME) {
@@ -137,7 +175,7 @@ void render_description(){
             currentWordIndex++;
         }
     }
-    char *textString = background_description("event_1");
+    char *textString = event_description(event);
     int len = strlen(textString);
     if (words != NULL) {
         for (int i = 0; i < totalWords; i++) {
@@ -186,16 +224,32 @@ void render_description(){
     free(textToRender);
     SDL_FreeSurface(textSurface);
 }
-// void render_character(){
-//     char *characterString = character_switch("event_1");
-//     // char *characterString = "img/character.png";
-//     snprintf(filePath, sizeof(filePath), "img/%s", characterString);
-//     SDL_Surface* characterSurface = IMG_Load(filePath);
-//     if (!characterSurface) {
-//         printf("Error creating character surface: %s\n", IMG_GetError());
-//         return;
-//     }
-// }
+// render character
+void render_background_character(char *event){
+    char *characterString = background_character(event);
+    char filePath[128];
+    snprintf(filePath, sizeof(filePath), "img/%s", characterString);
+    SDL_Surface* characterSurface = IMG_Load(filePath);
+    if (!characterSurface) {
+        printf("Error creating character surface: %s\n", IMG_GetError());
+        return;
+    }
+    SDL_Texture* characterTexture = SDL_CreateTextureFromSurface(renderer, characterSurface);
+    if (!characterTexture) {
+        printf("Error creating character texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(characterSurface); // Make sure to free the surface before returning
+        return;
+    }
+    SDL_Rect characterRect = (SDL_Rect){
+        40*VW,
+        20*VH,
+        20*VW,
+        20*VH
+    };
+    SDL_RenderCopy(renderer, characterTexture, NULL, &characterRect);
+    SDL_RenderPresent(renderer);
+    SDL_FreeSurface(characterSurface);
+}
 // destroy window
 void destroy_window(){
     SDL_DestroyTexture(texture);
@@ -205,29 +259,4 @@ void destroy_window(){
     SDL_DestroyTexture(textTexture);
     TTF_CloseFont(font);
     TTF_Quit();
-}
-// main function
-int main(int argc, char *argv[]){
-    game_is_running = initialize_window();
-    if(!game_is_running){
-        return 1;
-    }
-    setup();
-    char event[128] = "event_1";
-    while(game_is_running){
-        render_background(event); // check
-        render_description(event); // check
-        // if(character_is_visible(event))
-        //     render_character(event); // update();
-        // if (diaolog_is_visible(event))
-        //     render_dialog(event);
-        // if(endding)
-        //     game_is_running = FALSE;
-        // render_choice();
-        process_input();
-        // 找下一個event
-        update_words();
-    }
-    destroy_window();
-    return 0;
 }

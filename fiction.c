@@ -34,10 +34,10 @@ char *get_background(char *event)
         return NULL;
     }
     fclose(fp);
-    return background.u.s;
+    return get_background_image(background.u.s);
 }
 
-char *background_description(char *event)
+char *event_description(char *event)
 {
     FILE *fp = fopen("new.toml", "r");
     char errbuf[200];
@@ -98,7 +98,7 @@ char *background_character(char *event)
         return NULL;
     }
     fclose(fp);
-    return character.u.s;
+    return get_character_image(character.u.s);
 }
 
 toml_array_t *get_dialogue_array(char *event)
@@ -163,4 +163,68 @@ toml_array_t *get_choices_array(char *event)
     }
     fclose(fp);
     return choices;
+}
+
+char *get_background_image(char *scene)
+{
+    FILE *fp = fopen("new.toml", "r");
+    char errbuf[200];
+    toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
+    if (index == 0)
+    {
+        printf("Error: %s\n", errbuf);
+        return NULL;
+    }
+    toml_table_t* scene_table = toml_table_in(index, "scenes");
+    if (scene == 0)
+    {
+        printf("Error: %s\n", "scenes not found");
+        return NULL;
+    }
+    toml_table_t* target_scene = toml_table_in(scene_table, scene);
+    if (target_scene == 0)
+    {
+        printf("Error: %s\n", "scene not found");
+        return NULL;
+    }
+    toml_datum_t background = toml_string_in(target_scene, "background_image");
+    if (!background.ok)
+    {
+        // printf("Error: %s\n", "background not found");
+        return NULL;
+    }
+    fclose(fp);
+    return background.u.s;
+}
+
+char *get_character_image(char *character)
+{
+    FILE *fp = fopen("new.toml", "r");
+    char errbuf[200];
+    toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
+    if (index == 0)
+    {
+        printf("Error: %s\n", errbuf);
+        return NULL;
+    }
+    toml_table_t* character_table = toml_table_in(index, "characters");
+    if (character == 0)
+    {
+        printf("Error: %s\n", "characters not found");
+        return NULL;
+    }
+    toml_table_t* target_character = toml_table_in(character_table, character);
+    if (target_character == 0)
+    {
+        printf("Error: %s\n", "character not found");
+        return NULL;
+    }
+    toml_datum_t image = toml_string_in(target_character, "portrait_image");
+    if (!image.ok)
+    {
+        // printf("Error: %s\n", "image not found");
+        return NULL;
+    }
+    fclose(fp);
+    return image.u.s;
 }

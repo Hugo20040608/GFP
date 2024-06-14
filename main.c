@@ -13,6 +13,7 @@
 
 int32_t initialize_window();
 void setup();
+void open_screen();
 void render_background(char *event);
 void render_description(char *event);
 void render_background_character(char *event);
@@ -26,6 +27,8 @@ int32_t detect_user_input_number();
 void detect_user_input_escape();
 void read_database_start(char *database, char *event);
 void save_event_to_database(char *database, char *event);
+void end_screen_fail();
+void end_screen_success();
 
 int main(int argc, char *argv[]){
     printf("Please enter the name of the story file: ");
@@ -35,6 +38,7 @@ int main(int argc, char *argv[]){
         return 1;
     }
     setup();
+    // open_screen();
     play_music();
     char event[100] = {0}; // start from database save_event
     read_database_start("database.txt", event);
@@ -170,6 +174,23 @@ void setup(){
         WINDOW_WIDTH,
         WINDOW_HEIGHT
     };
+}
+// open screen
+void open_screen(){
+    SDL_Surface* surface = IMG_Load("img/game_start.png");
+    if (!surface) {
+        printf("Error creating surface: %s\n", IMG_GetError());
+        return;
+    }
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (!texture) {
+        printf("Error creating texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(surface); // Make sure to free the surface before returning
+        return;
+    }
+    SDL_RenderCopy(renderer, texture, NULL, &rect_background);
+    SDL_RenderPresent(renderer);
+    process_input_space();
 }
 // process input
 void process_input_space(){
@@ -483,4 +504,36 @@ void save_event_to_database(char *database, char *event)
     }
     free(database_content);
     return;
+}
+void end_screen_fail(){
+    SDL_Surface* surface = IMG_Load("img/game_end_fail.png");
+    if (!surface) {
+        printf("Error creating surface: %s\n", IMG_GetError());
+        return;
+    }
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (!texture) {
+        printf("Error creating texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(surface); // Make sure to free the surface before returning
+        return;
+    }
+    SDL_RenderCopy(renderer, texture, NULL, &rect_background);
+    SDL_RenderPresent(renderer);
+    process_input_space();
+}
+void end_screen_success(){
+    SDL_Surface* surface = IMG_Load("img/game_end_success.png");
+    if (!surface) {
+        printf("Error creating surface: %s\n", IMG_GetError());
+        return;
+    }
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (!texture) {
+        printf("Error creating texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(surface); // Make sure to free the surface before returning
+        return;
+    }
+    SDL_RenderCopy(renderer, texture, NULL, &rect_background);
+    SDL_RenderPresent(renderer);
+    process_input_space();
 }

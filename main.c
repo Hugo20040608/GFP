@@ -17,10 +17,10 @@ void render_background(char *event);
 void render_description(char *event);
 void render_background_character(char *event);
 void destroy_window();
-void render_dialogue(char *character_id, char *text);
+void render_dialogue(char *character_id, char *text, char *event);
 void render_character(char *character_image);
 void render_text(char *text);
-void render_choice(toml_array_t *choices);
+void render_choice(toml_array_t *choices, int32_t *choice);
 void process_input_space();
 int32_t detect_user_input_number();
 
@@ -38,6 +38,8 @@ int main(int argc, char *argv[]){
         render_background(event);
         if(background_character(event) != NULL)
             render_background_character(event);
+        currentWordIndex = 0;
+        totalWords = 0;
         while(1){
             render_description(event);
             if(currentWordIndex >= totalWords){
@@ -56,13 +58,16 @@ int main(int argc, char *argv[]){
                 toml_datum_t character_id = toml_string_in(dialogue_table, "character_id");
                 toml_datum_t text = toml_string_in(dialogue_table, "text");
                 if (!character_id.ok || !text.ok){
-                    printf("Error: %s\n", "character_id or text not found");
-                    return 1;
+                    // printf("Error: %s\n", "character_id or text not found");
+                    return 0;
                 }
-                render_dialogue(character_id.u.s, text.u.s);
-                process_input_space();
+                render_dialogue(character_id.u.s, text.u.s, event);
+                free(character_id.u.s);
+                free(text.u.s);
+                free (dialogue_table);
             }
         }
+        free(dialogue);
         if(check_endding(event)){
             game_is_running = FALSE;
             break;
@@ -71,8 +76,8 @@ int main(int argc, char *argv[]){
         int32_t choice = 0;
         toml_array_t *choices = get_choices_array(event);
         if (choices != NULL){
-            render_choice(choices);
-            choice = detect_user_input_number();
+            render_choice(choices, &choice);
+            free(choices);
         }
         // part 4 (選擇後的事件)
         toml_table_t *choice_table = toml_table_at(choices, choice-1);
@@ -88,6 +93,7 @@ int main(int argc, char *argv[]){
             game_is_running = FALSE;
             break;
         }
+        free(choice_table);
     }
     destroy_window();
     free_music();
@@ -127,22 +133,6 @@ int32_t initialize_window(){
     }
     return TRUE;
 }
-// setup window
-// void setup_cursor(){
-//     SDL_Surface* cursorSurface = SDL_LoadBMP("img/ancientbook.bmp");
-//     if (!cursorSurface) {
-//         printf("Unable to load cursor image: %s\n", SDL_GetError());
-//     }
-//     else {
-//         SDL_Cursor* cursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
-//         if (!cursor) {
-//             printf("Unable to create cursor: %s\n", SDL_GetError());
-//         } else {
-//             SDL_SetCursor(cursor);
-//         }
-//         SDL_FreeSurface(cursorSurface);
-//     }
-// }
 // setup window
 void setup(){
     // setup_cursor();
@@ -223,11 +213,22 @@ void destroy_window(){
     TTF_Quit();
 }
 
-void render_dialogue(char *character_id, char *text){
+void render_dialogue(char *character_id, char *text, char *event){
+    // 蓋掉角色和對話框
+    render_background(event);
     // render character
     render_character(get_character_image(character_id));
     // render text
-    render_text(text);
+    currentWordIndex = 0;
+    totalWords = 0;
+    while (1)
+    {
+        render_text(text);
+        if(currentWordIndex >= totalWords){
+            process_input_space();
+            break;
+        }
+    }
 }
 
 void render_character(char *character_image){
@@ -248,7 +249,7 @@ void render_character(char *character_image){
         40*VW,
         20*VH,
         20*VW,
-        20*VH
+        50*VH
     };
     SDL_RenderCopy(renderer, characterTexture, NULL, &characterRect);
     SDL_RenderPresent(renderer);
@@ -264,14 +265,13 @@ void render_text(char *text){
         SDL_Delay(time_to_wait);
     }
     last_frame_time = SDL_GetTicks();
-    // Adjust text display speed, every 100 milliseconds display a new character
-    if (SDL_GetTicks() - start_time >= 100) {
+    // Adjust text display speed, every 30 milliseconds display a new character
+    if (SDL_GetTicks() - start_time >= 30) {
         start_time = SDL_GetTicks();
         if (currentWordIndex < totalWords) {
             currentWordIndex++;
         }
     }
-    int len = strlen(text);
     if (words != NULL) {
         for (int i = 0; i < totalWords; i++) {
             free(words[i]);
@@ -290,6 +290,11 @@ void render_text(char *text){
     for (int i = 0; i <= currentWordIndex && i < totalWords; i++) {
         strcat(textToRender, words[i]);
     }
+    for(int i=0; i<totalWords; i++){
+        free(words[i]);
+    }
+    free(words);
+    words = NULL;
     SDL_Color color = {255, 255, 255, 255};  // white color
     SDL_Surface* textSurface = TTF_RenderUTF8_Solid(font, textToRender, color);
     
@@ -320,7 +325,7 @@ void render_text(char *text){
     SDL_FreeSurface(textSurface);
 }
 
-void render_choice(toml_array_t *choices){
+void render_choice(toml_array_t *choices, int32_t *choice){
     // 把選項連結起來，並且加上選項編號和換行符號
     char choice_string[1000]={0};
     char index[10]={0};
@@ -337,9 +342,18 @@ void render_choice(toml_array_t *choices){
         snprintf(index, sizeof(index), "(%d)", i+1);
         strcat(choice_string, index);
         strcat(choice_string, choice.u.s);
-        strcat(choice_string, "\n");
+        strcat(choice_string, "    ");
     }
-    render_text(choice_string);
+    currentWordIndex = 0;
+    totalWords = 0;
+    while (1)
+    {
+        render_text(choice_string);
+        if(currentWordIndex >= totalWords){
+            *choice = detect_user_input_number();
+            break;
+        }
+    }
 }
 
 int32_t detect_user_input_number(){

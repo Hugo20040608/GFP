@@ -219,7 +219,7 @@ void render_dialogue(char *character_id, char *text, char *event){
     // 蓋掉角色和對話框
     render_background(event);
     // render character
-    render_character(get_character_image(character_id));
+    render_character(get_character_image(character_id, STORY_FILE_NAME));
     // render text
     currentWordIndex = 0;
     totalWords = 0;

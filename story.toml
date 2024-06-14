@@ -42,25 +42,25 @@
 
 # 物品定義
 [items]
-    [item_1]
+    [items.item_1]
     id = "item_1"
     name = "魔法石"
     icon_image = "magicstone.jpg"
     description = "這是一顆閃爍著藍光的魔法石，據說能改變命運。"
 
-    [item_2]
+    [items.item_2]
     id = "item_2"
     name = "古書"
     icon_image = "ancientbook.jpg"
     description = "一本古老的書籍，裡面記載了許多失傳的秘術。"
 
-    [item_3]
+    [items.item_3]
     id = "item_3"
     name = "北村鑰匙"
     # icon_image = "key1.jpg"
     description = "得到北村的鑰匙。"
 
-    [item_4]
+    [items.item_4]
     id = "item_4"
     name = "南村鑰匙"
     # icon_image = "key2.jpg"

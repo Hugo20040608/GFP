@@ -30,6 +30,7 @@ void detect_user_input_escape(); // 檢測用戶輸入逃脫
 // --------------------------------------------------------------------------
 void read_database_start(char *database, char *event); // 讀取數據庫開始
 void save_event_to_database(char *database, char *event); // 保存事件到數據庫
+void save_item_to_database(char *database, char *item); // 更新存檔的物品
 // --------------------------------------------------------------------------
 void open_screen(); // 開場畫面
 void end_screen_fail(); // 失敗畫面
@@ -99,10 +100,20 @@ int main(int argc, char *argv[]){
             return 0;
         }
         free(dialogue);
+        // small part (檢查物品)
+        char *item = check_item(event, STORY_FILE_NAME);
+        if(item != NULL){
+            char message[200] = {0};
+            snprintf(message, sizeof(message), "你得到了%s", item);
+            render_text(message);
+            save_item_to_database("database.txt", item);
+            process_input_space();
+        }
         if(check_endding(event, STORY_FILE_NAME)){
             game_is_running = FALSE;
             break;
         }
+        free(item);
         // part 3 (選項)
         int32_t choice = 0;
         toml_array_t *choices = get_choices_array(event, STORY_FILE_NAME);
@@ -561,4 +572,44 @@ void end_screen_success(){
     SDL_RenderPresent(renderer);
     process_input_space();
     free_music();
+}
+// 更新存檔的物品
+void save_item_to_database(char *database, char *item)
+{
+    FILE *fp = fopen(database, "r");
+    if (fp == NULL) {
+        printf("Error opening database file\n");
+        return;
+    }
+    char line[256];
+    int32_t counter = 0;
+    while (fgets(line, sizeof(line), fp)) {
+        counter++;
+    }
+    char **database_content = calloc(counter, sizeof(char *));
+    for(int32_t i=0; i<counter; i++){
+        database_content[i] = calloc(100, sizeof(char));
+    }
+    fseek(fp, 0, SEEK_SET);
+    for(int32_t i=0; i<counter; i++){
+        fgets(line, sizeof(line), fp);
+        strcpy(database_content[i], line);
+    }
+    fclose(fp);
+    for(int32_t i=0; i<counter; i++){
+        if(strstr(database_content[i], item) != NULL){
+            strcpy(database_content[i+1], "1\n");
+            break;
+        }
+    }
+    fp = fopen(database, "w");
+    for(int32_t i=0; i<counter; i++){
+        fprintf(fp, "%s", database_content[i]);
+    }
+    fclose(fp);
+    for(int32_t i=0; i<counter; i++){
+        free(database_content[i]);
+    }
+    free(database_content);
+    return;
 }

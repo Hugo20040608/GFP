@@ -11,21 +11,26 @@
 #include "music.h"
 #include "toml.h"
 
-int32_t initialize_window();
-void setup();
-void render_background(char *event);
-void render_description(char *event);
-void render_background_character(char *event);
-void destroy_window();
-void render_dialogue(char *character_id, char *text, char *event);
-void render_character(char *character_image);
-void render_text(char *text);
-void render_choice(toml_array_t *choices, int32_t *choice);
-void process_input_space();
-int32_t detect_user_input_number();
-void detect_user_input_escape();
-void read_database_start(char *database, char *event);
-void save_event_to_database(char *database, char *event);
+int32_t initialize_window(); // 初始化視窗
+void setup(); // 設定視窗
+void destroy_window(); // 關閉視窗
+// --------------------------------------------------------------------------
+void render_background(char *event); // 渲染背景
+void render_description(char *event); // 渲染描述
+void render_background_character(char *event); // 渲染背景人物
+void render_dialogue(char *character_id, char *text, char *event); // 渲染對話
+void render_choice(toml_array_t *choices, int32_t *choice); // 渲染選項
+// --------------------------------------------------------------------------
+void render_character(char *character_image); // 渲染角色
+void render_text(char *text); // 渲染文字
+// --------------------------------------------------------------------------
+void process_input_space(); // 處理空白鍵
+int32_t detect_user_input_number(); // 檢測用戶輸入數字
+void detect_user_input_escape(); // 檢測用戶輸入逃脫
+// --------------------------------------------------------------------------
+void read_database_start(char *database, char *event); // 讀取數據庫開始
+void save_event_to_database(char *database, char *event); // 保存事件到數據庫
+// --------------------------------------------------------------------------
 void open_screen(); // 開場畫面
 void end_screen_fail(); // 失敗畫面
 void end_screen_success(); // 成功畫面
@@ -38,8 +43,8 @@ int main(int argc, char *argv[]){
         return 1;
     }
     setup();
-    // open_screen();
-    play_music();
+    open_screen();
+    play_music("raining_village.mp3");
     char event[100] = {0}; // start from database save_event
     read_database_start("database.txt", event);
     // game loop
@@ -59,7 +64,9 @@ int main(int argc, char *argv[]){
         }
         if(!game_is_running){
             save_event_to_database("database.txt", event);
-            break;
+            destroy_window();
+            free_music();
+            return 0;
         }
         // part 2 (對話)
         toml_array_t *dialogue = get_dialogue_array(event, STORY_FILE_NAME);
@@ -87,7 +94,9 @@ int main(int argc, char *argv[]){
         if(!game_is_running){
             free(dialogue);
             save_event_to_database("database.txt", event);
-            break;
+            destroy_window();
+            free_music();
+            return 0;
         }
         free(dialogue);
         if(check_endding(event, STORY_FILE_NAME)){
@@ -103,7 +112,9 @@ int main(int argc, char *argv[]){
         }
         if(!game_is_running){
             save_event_to_database("database.txt", event);
-            break;
+            destroy_window();
+            free_music();
+            return 0;
         }
         // part 4 (選擇後的事件)
         toml_table_t *choice_table = toml_table_at(choices, choice-1);
@@ -121,8 +132,14 @@ int main(int argc, char *argv[]){
         }
         free(choice_table);
     }
-    destroy_window();
     free_music();
+    if(strcmp(event, "event_13") == 0){
+        end_screen_success();
+    }
+    else{
+        end_screen_fail();
+    }
+    destroy_window();
     return 0;
 }
 
@@ -177,6 +194,7 @@ void setup(){
 }
 // open screen
 void open_screen(){
+    play_music("op.mp3");
     SDL_Surface* surface = IMG_Load("img/game_start.png");
     if (!surface) {
         printf("Error creating surface: %s\n", IMG_GetError());
@@ -191,6 +209,7 @@ void open_screen(){
     SDL_RenderCopy(renderer, texture, NULL, &rect_background);
     SDL_RenderPresent(renderer);
     process_input_space();
+    free_music();
 }
 // process input
 void process_input_space(){
@@ -491,7 +510,7 @@ void save_event_to_database(char *database, char *event)
     fclose(fp);
     strcat(event, "\n");
     for(int32_t i=0; i<counter; i++){
-        if(strstr(database_content[i], event) != NULL){
+        if(strstr(database_content[i], "save_event") != NULL){
             strcpy(database_content[i+1], event);
             break;
         }
@@ -508,7 +527,8 @@ void save_event_to_database(char *database, char *event)
     return;
 }
 void end_screen_fail(){
-    SDL_Surface* surface = IMG_Load("img/game_end_fail.png");
+    play_music("game_over.mp3");
+    SDL_Surface* surface = IMG_Load("img/game_end_fail.jpg");
     if (!surface) {
         printf("Error creating surface: %s\n", IMG_GetError());
         return;
@@ -522,9 +542,11 @@ void end_screen_fail(){
     SDL_RenderCopy(renderer, texture, NULL, &rect_background);
     SDL_RenderPresent(renderer);
     process_input_space();
+    free_music();
 }
 void end_screen_success(){
-    SDL_Surface* surface = IMG_Load("img/game_end_success.png");
+    play_music("win.mp3");
+    SDL_Surface* surface = IMG_Load("img/game_end_success.jpg");
     if (!surface) {
         printf("Error creating surface: %s\n", IMG_GetError());
         return;
@@ -538,4 +560,5 @@ void end_screen_success(){
     SDL_RenderCopy(renderer, texture, NULL, &rect_background);
     SDL_RenderPresent(renderer);
     process_input_space();
+    free_music();
 }

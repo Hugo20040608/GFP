@@ -5,7 +5,7 @@
     [scenes.scene_1]
     id = "scene_1"
     name = "神秘森林"
-    background_image = "forest_background.jpg"
+    background_image = "forest_background.png"
     description = "這是一個神秘的森林，光線透過樹葉斑駁地灑在地上。"
 
     [scenes.scene_2]

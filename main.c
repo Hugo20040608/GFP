@@ -8,6 +8,7 @@
 #include "fiction.h"
 #include "utf8split.h"
 #include "constants.h"
+#include "music.h"
 #include "toml.h"
 
 int32_t initialize_window();
@@ -29,6 +30,7 @@ int main(int argc, char *argv[]){
         return 1;
     }
     setup();
+    play_music();
     char event[128] = "event_1"; // start from event_1
     // game loop
     while(game_is_running){
@@ -94,6 +96,7 @@ int main(int argc, char *argv[]){
         free(choice_table);
     }
     destroy_window();
+    free_music();
     return 0;
 }
 

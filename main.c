@@ -298,28 +298,34 @@ void render_text(char *text){
     free(words);
     words = NULL;
     SDL_Color color = {255, 255, 255, 255};  // white color
-    SDL_Surface* textSurface = TTF_RenderUTF8_Solid(font, textToRender, color);
+    int maxWidth = 90 * VW - 10;
+    SDL_Surface *textSurface = TTF_RenderUTF8_Blended_Wrapped(font, textToRender, color, maxWidth);
     
     if (!textSurface) {
         printf("Error creating text surface: %s\n", TTF_GetError());
         return;
     }
-    int textWidth = 0;
-    int textHeight = 0;
-    if (TTF_SizeUTF8(font, textToRender, &textWidth, &textHeight) != 0) {
-        printf("Error getting text size: %s\n", TTF_GetError());
-        return;
-    }
+    // int textWidth = 0;
+    // int textHeight = 0;
+    // int lineHeight = 20;
+    // if (TTF_SizeUTF8(font, textToRender, &textWidth, &textHeight) != 0) {
+    //     printf("Error getting text size: %s\n", TTF_GetError());
+    //     return;
+    // }
+    // if(textWidth > 90 * VW){
+    //     textWidth = 90 * VW;
+    //     textHeight += lineHeight;
+    // }
     textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
     if (!textTexture) {
         printf("Error creating text texture: %s\n", SDL_GetError());
         return;
     }
-    textRect = (SDL_Rect){
+    textRect = (SDL_Rect) {
         5 * VW + 10,
         70 * VH + 10,
-        textWidth,
-        textHeight
+        textSurface->w,
+        textSurface->h
     };
     SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
     SDL_RenderPresent(renderer);

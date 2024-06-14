@@ -25,6 +25,8 @@ void process_input_space();
 int32_t detect_user_input_number();
 
 int main(int argc, char *argv[]){
+    printf("Please enter the name of the story file: ");
+    fscanf(stdin, "%s", STORY_FILE_NAME);
     game_is_running = initialize_window();
     if(!game_is_running){
         return 1;
@@ -87,7 +89,7 @@ int main(int argc, char *argv[]){
                 // printf("Error: %s\n", "next_event not found");
                 return 0;
             }
-            strcpy(event, next_event_datum.u.s);
+            strncpy(event, next_event_datum.u.s, sizeof(event));
         }
         else{
             game_is_running = FALSE;

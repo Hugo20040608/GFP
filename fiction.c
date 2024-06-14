@@ -4,10 +4,11 @@
 #include <string.h>
 #include "toml.h"
 #include "fiction.h"
+#include "constants.h"
 
 char *get_background(char *event)
 {
-    FILE *fp = fopen("new.toml", "r");
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
     toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
     if (index == 0)
@@ -39,7 +40,7 @@ char *get_background(char *event)
 
 char *event_description(char *event)
 {
-    FILE *fp = fopen("new.toml", "r");
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
     toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
     if (index == 0)
@@ -71,7 +72,7 @@ char *event_description(char *event)
 
 char *background_character(char *event)
 {
-    FILE *fp = fopen("new.toml", "r");
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
     toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
     if (index == 0)
@@ -103,7 +104,7 @@ char *background_character(char *event)
 
 toml_array_t *get_dialogue_array(char *event)
 {
-    FILE *fp = fopen("new.toml", "r");
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
     toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
     if (index == 0)
@@ -135,7 +136,7 @@ toml_array_t *get_dialogue_array(char *event)
 
 toml_array_t *get_choices_array(char *event)
 {
-    FILE *fp = fopen("new.toml", "r");
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
     toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
     if (index == 0)
@@ -167,7 +168,7 @@ toml_array_t *get_choices_array(char *event)
 
 char *get_background_image(char *scene)
 {
-    FILE *fp = fopen("new.toml", "r");
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
     toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
     if (index == 0)
@@ -199,7 +200,7 @@ char *get_background_image(char *scene)
 
 char *get_character_image(char *character)
 {
-    FILE *fp = fopen("new.toml", "r");
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
     toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
     if (index == 0)
@@ -231,7 +232,7 @@ char *get_character_image(char *character)
 
 int32_t check_endding(char *event)
 {
-    FILE *fp = fopen("new.toml", "r");
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
     toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
     if (index == 0)

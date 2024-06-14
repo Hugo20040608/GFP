@@ -316,8 +316,8 @@ void render_text(char *text){
         return;
     }
     textRect = (SDL_Rect){
-        5*VW,
-        70*VH,
+        5 * VW + 10,
+        70 * VH + 10,
         textWidth,
         textHeight
     };

@@ -269,19 +269,19 @@ char *check_item(char *event, char *STORY_FILE_NAME)
     if (index == 0)
     {
         printf("Error: %s\n", errbuf);
-        return 1;
+        return NULL;
     }
     toml_table_t* event_table = toml_table_in(index, "events");
     if (event == 0)
     {
         printf("Error: %s\n", "events not found");
-        return 1;
+        return NULL;
     }
     toml_table_t* target_event = toml_table_in(event_table, event);
     if (target_event == 0)
     {
         printf("Error: %s\n", "event not found");
-        return 1;
+        return NULL;
     }
     toml_datum_t item = toml_string_in(target_event, "item");
     if (item.ok)
@@ -290,13 +290,13 @@ char *check_item(char *event, char *STORY_FILE_NAME)
         if (item_table == 0)
         {
             printf("Error: %s\n", "items not found");
-            return 1;
+            return NULL;
         }
         toml_table_t *target_item = toml_table_in(item_table, item.u.s);
         if (target_item == 0)
         {
             printf("Error: %s\n", "item not found");
-            return 1;
+            return NULL;
         }
         toml_datum_t name = toml_string_in(target_item, "name");
         if (!name.ok)

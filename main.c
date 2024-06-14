@@ -23,7 +23,9 @@ void render_text(char *text);
 void render_choice(toml_array_t *choices, int32_t *choice);
 void process_input_space();
 int32_t detect_user_input_number();
+void detect_user_input_escape();
 void read_database_start(char *database, char *event);
+void save_event_to_database(char *database, char *event);
 
 int main(int argc, char *argv[]){
     printf("Please enter the name of the story file: ");
@@ -34,7 +36,7 @@ int main(int argc, char *argv[]){
     }
     setup();
     play_music();
-    char *event = NULL; // start from database save_event
+    char event[100] = {0}; // start from database save_event
     read_database_start("database.txt", event);
     // game loop
     while(game_is_running){
@@ -47,9 +49,17 @@ int main(int argc, char *argv[]){
         while(1){
             render_description(event);
             if(currentWordIndex >= totalWords){
+                detect_user_input_escape();
+                if(!game_is_running){
+                    break;
+                }
                 process_input_space();
                 break;
             }
+        }
+        if(!game_is_running){
+            save_event_to_database("database.txt", event);
+            break;
         }
         // part 2 (對話)
         toml_array_t *dialogue = get_dialogue_array(event, STORY_FILE_NAME);
@@ -385,6 +395,17 @@ int32_t detect_user_input_number(){
     return number;
 }
 
+void detect_user_input_escape(){
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.sym == SDLK_ESCAPE) {
+                game_is_running = FALSE;
+            }
+        }
+    }
+}
+
 void read_database_start(char *database, char *event)
 {
     FILE *fp = fopen(database, "r");
@@ -393,8 +414,18 @@ void read_database_start(char *database, char *event)
         return;
     }
     char line[256];
+    while (fgets(line, sizeof(line), fp)) {
+        if(strstr(line, "save_event") != NULL){
+            break;
+        }
+    }
     fgets(line, sizeof(line), fp);
-    event = strdup(strchr(line, ' ') + 1);
+    for(int32_t i=0; i<strlen(line); i++){
+        if(line[i] == '\n'){
+            line[i] = '\0';
+        }
+    }
+    strcpy(event, line);
     fclose(fp);
 }
 

@@ -28,7 +28,7 @@
     portrait_image = "hero.jpg"
     description = "勇者是個年輕而勇敢的人，他的目標是拯救世界。"
 
-    [characters.charavter_2]
+    [characters.character_2]
     id = "character_2"
     name = "神秘老人"
     portrait_image = "old_man.jpg"

@@ -13,7 +13,6 @@
 
 int32_t initialize_window();
 void setup();
-void open_screen();
 void render_background(char *event);
 void render_description(char *event);
 void render_background_character(char *event);
@@ -27,8 +26,9 @@ int32_t detect_user_input_number();
 void detect_user_input_escape();
 void read_database_start(char *database, char *event);
 void save_event_to_database(char *database, char *event);
-void end_screen_fail();
-void end_screen_success();
+void open_screen(); // 開場畫面
+void end_screen_fail(); // 失敗畫面
+void end_screen_success(); // 成功畫面
 
 int main(int argc, char *argv[]){
     printf("Please enter the name of the story file: ");
@@ -485,9 +485,11 @@ void save_event_to_database(char *database, char *event)
     }
     fseek(fp, 0, SEEK_SET);
     for(int32_t i=0; i<counter; i++){
-        fgets(database_content[i], sizeof(database_content[i]), fp);
+        fgets(line, sizeof(line), fp);
+        strcpy(database_content[i], line);
     }
     fclose(fp);
+    strcat(event, "\n");
     for(int32_t i=0; i<counter; i++){
         if(strstr(database_content[i], event) != NULL){
             strcpy(database_content[i+1], event);

@@ -23,4 +23,4 @@ int last_frame_time = 0;
 int currentWordIndex = 0;
 int totalWords = 0;
 char **words = NULL;
-char STORY_FILE_NAME[100] = {0};
+char STORY_FILE_NAME[128];

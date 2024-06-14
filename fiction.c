@@ -2,14 +2,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include "toml.h"
 #include "fiction.h"
-#include "constants.h"
 
-char *get_background(char *event)
+char *get_background(char *event, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
@@ -38,10 +34,10 @@ char *get_background(char *event)
         return NULL;
     }
     fclose(fp);
-    return get_background_image(background.u.s);
+    return get_background_image(background.u.s, STORY_FILE_NAME);
 }
 
-char *event_description(char *event)
+char *event_description(char *event, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
@@ -73,7 +69,7 @@ char *event_description(char *event)
     return description.u.s;
 }
 
-char *background_character(char *event)
+char *background_character(char *event, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
@@ -102,10 +98,10 @@ char *background_character(char *event)
         return NULL;
     }
     fclose(fp);
-    return get_character_image(character.u.s);
+    return get_character_image(character.u.s, STORY_FILE_NAME);
 }
 
-toml_array_t *get_dialogue_array(char *event)
+toml_array_t *get_dialogue_array(char *event, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
@@ -137,7 +133,7 @@ toml_array_t *get_dialogue_array(char *event)
     return dialogue;
 }
 
-toml_array_t *get_choices_array(char *event)
+toml_array_t *get_choices_array(char *event, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
@@ -169,7 +165,7 @@ toml_array_t *get_choices_array(char *event)
     return choices;
 }
 
-char *get_background_image(char *scene)
+char *get_background_image(char *scene, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
@@ -201,7 +197,7 @@ char *get_background_image(char *scene)
     return background.u.s;
 }
 
-char *get_character_image(char *character)
+char *get_character_image(char *character, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
@@ -233,7 +229,7 @@ char *get_character_image(char *character)
     return image.u.s;
 }
 
-int32_t check_endding(char *event)
+int32_t check_endding(char *event, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];

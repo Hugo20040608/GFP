@@ -6,11 +6,11 @@
 #include "toml.h"
 #include "fiction.h"
 
-char *get_background(char *event);
-char *event_description(char *event);
-char *background_character(char *event);
-toml_array_t *get_dialogue_array(char *event);
-toml_array_t *get_choices_array(char *event);
-char *get_background_image(char *scene);
-char *get_character_image(char *character);
-int32_t check_endding(char *event);
+char *get_background(char *event, char *STORY_FILE_NAME);
+char *event_description(char *event, char *STORY_FILE_NAME);
+char *background_character(char *event, char *STORY_FILE_NAME);
+toml_array_t *get_dialogue_array(char *event, char *STORY_FILE_NAME);
+toml_array_t *get_choices_array(char *event, char *STORY_FILE_NAME);
+char *get_background_image(char *scene, char *STORY_FILE_NAME);
+char *get_character_image(char *character, char *STORY_FILE_NAME);
+int32_t check_endding(char *event, char *STORY_FILE_NAME);

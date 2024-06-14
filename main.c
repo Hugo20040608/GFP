@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
     while(game_is_running){
         // part 1 (背景、描述、背景人物)
         render_background(event);
-        if(background_character(event) != NULL)
+        if(background_character(event, STORY_FILE_NAME) != NULL)
             render_background_character(event);
         currentWordIndex = 0;
         totalWords = 0;
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
             }
         }
         // part 2 (對話)
-        toml_array_t *dialogue = get_dialogue_array(event);
+        toml_array_t *dialogue = get_dialogue_array(event, STORY_FILE_NAME);
         if (dialogue != NULL){
             for(int32_t i=0;;i++){
                 toml_table_t *dialogue_table = toml_table_at(dialogue, i);
@@ -70,13 +70,13 @@ int main(int argc, char *argv[]){
             }
         }
         free(dialogue);
-        if(check_endding(event)){
+        if(check_endding(event, STORY_FILE_NAME)){
             game_is_running = FALSE;
             break;
         }
         // part 3 (選項)
         int32_t choice = 0;
-        toml_array_t *choices = get_choices_array(event);
+        toml_array_t *choices = get_choices_array(event, STORY_FILE_NAME);
         if (choices != NULL){
             render_choice(choices, &choice);
             free(choices);
@@ -178,7 +178,7 @@ void process_input_space(){
 }
 // render window
 void render_background(char *event){
-    char *backgroundString = get_background(event);
+    char *backgroundString = get_background(event, STORY_FILE_NAME);
     char filePath[128];
     snprintf(filePath, sizeof(filePath), "img/%s", backgroundString);
     SDL_Surface* surface = IMG_Load(filePath); 
@@ -198,11 +198,11 @@ void render_background(char *event){
 }
 // render description
 void render_description(char *event){
-    render_text(event_description(event));
+    render_text(event_description(event, STORY_FILE_NAME));
 }
 // render character
 void render_background_character(char *event){
-    render_character(background_character(event));
+    render_character(background_character(event, STORY_FILE_NAME));
 }
 // destroy window
 void destroy_window(){

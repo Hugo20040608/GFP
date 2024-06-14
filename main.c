@@ -23,6 +23,7 @@ void render_text(char *text);
 void render_choice(toml_array_t *choices, int32_t *choice);
 void process_input_space();
 int32_t detect_user_input_number();
+void read_database_start(char *database, char *event);
 
 int main(int argc, char *argv[]){
     printf("Please enter the name of the story file: ");
@@ -33,7 +34,8 @@ int main(int argc, char *argv[]){
     }
     setup();
     play_music();
-    char event[128] = "event_1"; // start from event_1
+    char *event = NULL; // start from database save_event
+    read_database_start("database.txt", event);
     // game loop
     while(game_is_running){
         // part 1 (背景、描述、背景人物)
@@ -375,4 +377,56 @@ int32_t detect_user_input_number(){
     }
 
     return number;
+}
+
+void read_database_start(char *database, char *event)
+{
+    FILE *fp = fopen(database, "r");
+    if (fp == NULL) {
+        printf("Error opening database file\n");
+        return;
+    }
+    char line[256];
+    fgets(line, sizeof(line), fp);
+    event = strdup(strchr(line, ' ') + 1);
+    fclose(fp);
+}
+
+void save_event_to_database(char *database, char *event)
+{
+    FILE *fp = fopen(database, "r");
+    if (fp == NULL) {
+        printf("Error opening database file\n");
+        return;
+    }
+    char line[256];
+    int32_t counter = 0;
+    while (fgets(line, sizeof(line), fp)) {
+        counter++;
+    }
+    char **database_content = calloc(counter, sizeof(char *));
+    for(int32_t i=0; i<counter; i++){
+        database_content[i] = calloc(100, sizeof(char));
+    }
+    fseek(fp, 0, SEEK_SET);
+    for(int32_t i=0; i<counter; i++){
+        fgets(database_content[i], sizeof(database_content[i]), fp);
+    }
+    fclose(fp);
+    for(int32_t i=0; i<counter; i++){
+        if(strstr(database_content[i], event) != NULL){
+            strcpy(database_content[i+1], event);
+            break;
+        }
+    }
+    fp = fopen(database, "w");
+    for(int32_t i=0; i<counter; i++){
+        fprintf(fp, "%s", database_content[i]);
+    }
+    fclose(fp);
+    for(int32_t i=0; i<counter; i++){
+        free(database_content[i]);
+    }
+    free(database_content);
+    return;
 }

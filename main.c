@@ -49,10 +49,6 @@ int main(int argc, char *argv[]){
         while(1){
             render_description(event);
             if(currentWordIndex >= totalWords){
-                detect_user_input_escape();
-                if(!game_is_running){
-                    break;
-                }
                 process_input_space();
                 break;
             }
@@ -76,10 +72,18 @@ int main(int argc, char *argv[]){
                     return 0;
                 }
                 render_dialogue(character_id.u.s, text.u.s, event);
+                if(!game_is_running){
+                    break;
+                }
                 free(character_id.u.s);
                 free(text.u.s);
                 free (dialogue_table);
             }
+        }
+        if(!game_is_running){
+            free(dialogue);
+            save_event_to_database("database.txt", event);
+            break;
         }
         free(dialogue);
         if(check_endding(event, STORY_FILE_NAME)){
@@ -92,6 +96,10 @@ int main(int argc, char *argv[]){
         if (choices != NULL){
             render_choice(choices, &choice);
             free(choices);
+        }
+        if(!game_is_running){
+            save_event_to_database("database.txt", event);
+            break;
         }
         // part 4 (選擇後的事件)
         toml_table_t *choice_table = toml_table_at(choices, choice-1);
@@ -175,6 +183,11 @@ void process_input_space(){
                 case SDL_KEYDOWN:
                     if(event.key.keysym.sym == SDLK_SPACE)
                         condition = 1;
+                    else if(event.key.keysym.sym == SDLK_ESCAPE)
+                    {
+                        condition = 1;
+                        game_is_running = FALSE;
+                    }
                     break;
             }
             if(condition)
@@ -386,6 +399,10 @@ int32_t detect_user_input_number(){
             if (event.type == SDL_KEYDOWN) {
                 if (event.key.keysym.sym >= SDLK_0 && event.key.keysym.sym <= SDLK_9) {
                     number = event.key.keysym.sym - SDLK_0;
+                    isNumberEntered = 1;
+                }
+                else if(event.key.keysym.sym == SDLK_ESCAPE){
+                    game_is_running = FALSE;
                     isNumberEntered = 1;
                 }
             }

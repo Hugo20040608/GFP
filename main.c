@@ -26,13 +26,14 @@ void render_text(char *text); // 渲染文字
 // --------------------------------------------------------------------------
 void process_input_space(); // 處理空白鍵
 int32_t detect_user_input_number(); // 檢測用戶輸入數字
-void detect_user_input_escape(); // 檢測用戶輸入逃脫
+void detect_user_input_RD(char *key_in); // 檢測用戶輸入R或D
 // --------------------------------------------------------------------------
 void read_database_start(char *database, char *event); // 讀取數據庫開始
 void save_event_to_database(char *database, char *event); // 保存事件到數據庫
 void save_item_to_database(char *database, char *item); // 更新存檔的物品
+void refresh_database(char *database); // 刷新數據庫
 // --------------------------------------------------------------------------
-void open_screen(); // 開場畫面
+void open_screen(char *key_in); // 開場畫面
 void end_screen_fail(); // 失敗畫面
 void end_screen_success(); // 成功畫面
 
@@ -44,13 +45,23 @@ int main(int argc, char *argv[]){
         return 1;
     }
     setup();
-    open_screen();
+    char key_in[2] = {0};
+    open_screen(key_in);
+    if(!game_is_running){
+        destroy_window();
+        free_music();
+        return 0;
+    }
+    if(strcmp(key_in, "r") == 0){
+        refresh_database("database.txt");
+    }
     play_music("raining_village.mp3");
     char event[100] = {0}; // start from database save_event
     read_database_start("database.txt", event);
-    // game loop
+    // 遊戲迴圈，直到遊戲結束 (兩種結束方式: 1. 遊戲結束 2. 用戶按下ESC)
     while(game_is_running){
         // part 1 (背景、描述、背景人物)
+        SDL_RenderClear(renderer);
         render_background(event);
         if(background_character(event, STORY_FILE_NAME) != NULL)
             render_background_character(event);
@@ -62,6 +73,11 @@ int main(int argc, char *argv[]){
                 process_input_space();
                 break;
             }
+        }
+        // 這是 "1. 遊戲結束" 的條件
+        if(check_endding(event, STORY_FILE_NAME) != NULL){
+            game_is_running = FALSE;
+            break;
         }
         if(!game_is_running){
             save_event_to_database("database.txt", event);
@@ -109,9 +125,11 @@ int main(int argc, char *argv[]){
             save_item_to_database("database.txt", item);
             process_input_space();
         }
-        if(check_endding(event, STORY_FILE_NAME)){
-            game_is_running = FALSE;
-            break;
+        if(!game_is_running){
+            save_event_to_database("database.txt", event);
+            destroy_window();
+            free_music();
+            return 0;
         }
         free(item);
         // part 3 (選項)
@@ -139,14 +157,10 @@ int main(int argc, char *argv[]){
             }
             strncpy(event, next_event_datum.u.s, sizeof(event));
         }
-        else{
-            game_is_running = FALSE;
-            break;
-        }
         free(choice_table);
     }
     free_music();
-    if(strcmp(event, "event_13") == 0){
+    if(strcmp(check_endding(event, STORY_FILE_NAME), "success") == 0){
         end_screen_success();
     }
     else{
@@ -206,7 +220,7 @@ void setup(){
     };
 }
 // open screen
-void open_screen(){
+void open_screen(char *key_in){
     play_music("op.mp3");
     SDL_Surface* surface = IMG_Load("img/game_start.png");
     if (!surface) {
@@ -221,8 +235,7 @@ void open_screen(){
     }
     SDL_RenderCopy(renderer, texture, NULL, &rect_background);
     SDL_RenderPresent(renderer);
-    SDL_RenderClear(renderer);
-    process_input_space();
+    detect_user_input_RD(key_in);
     free_music();
 }
 // process input
@@ -467,16 +480,16 @@ int32_t detect_user_input_number(){
     return number;
 }
 
-void detect_user_input_escape(){
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_KEYDOWN) {
-            if (event.key.keysym.sym == SDLK_ESCAPE) {
-                game_is_running = FALSE;
-            }
-        }
-    }
-}
+// void detect_user_input_escape(){
+//     SDL_Event event;
+//     while (SDL_PollEvent(&event)) {
+//         if (event.type == SDL_KEYDOWN) {
+//             if (event.key.keysym.sym == SDLK_ESCAPE) {
+//                 game_is_running = FALSE;
+//             }
+//         }
+//     }
+// }
 
 void read_database_start(char *database, char *event)
 {
@@ -616,4 +629,87 @@ void save_item_to_database(char *database, char *item)
     }
     free(database_content);
     return;
+}
+
+void refresh_database(char *database)
+{
+    FILE *fp = fopen(database, "r");
+    if (fp == NULL) {
+        printf("Error opening database file\n");
+        return;
+    }
+    char line[256];
+    int32_t counter = 0;
+    while (fgets(line, sizeof(line), fp)) {
+        counter++;
+    }
+    char **database_content = calloc(counter, sizeof(char *));
+    for(int32_t i=0; i<counter; i++){
+        database_content[i] = calloc(100, sizeof(char));
+    }
+    fseek(fp, 0, SEEK_SET);
+    for(int32_t i=0; i<counter; i++){
+        fgets(line, sizeof(line), fp);
+        strcpy(database_content[i], line);
+    }
+    fclose(fp);
+    for(int32_t i=0; i<counter; i++){
+        if(strstr(database_content[i], "save_event") != NULL){
+            strcpy(database_content[i+1], "event_1\n");
+            break;
+        }
+    }
+    for(int32_t i=3; i<counter; i++){
+        if(i%2 == 1){
+            strcpy(database_content[i], "0\n");
+        }
+    }
+    fp = fopen(database, "w");
+    for(int32_t i=0; i<counter; i++){
+        fprintf(fp, "%s", database_content[i]);
+    }
+    fclose(fp);
+    for(int32_t i=0; i<counter; i++){
+        free(database_content[i]);
+    }
+    free(database_content);
+    return;
+}
+
+void detect_user_input_RD(char *key_in){
+    SDL_Event event;
+    int32_t condition=0;
+    while(1)
+    {
+        while(SDL_PollEvent(&event)) // 持續檢查事件
+        {
+            switch(event.type){
+                case SDL_KEYDOWN:
+                    if(event.key.keysym.sym == SDLK_r)
+                    {
+                        key_in[0] = 'r';
+                        condition = 1;
+                    }
+                    else if(event.key.keysym.sym == SDLK_d)
+                    {
+                        key_in[0] = 'd';
+                        condition = 1;
+                    }
+                    else if(event.key.keysym.sym == SDLK_ESCAPE)
+                    {
+                        condition = 1;
+                        game_is_running = FALSE;
+                    }
+                    break;
+            }
+            if(condition)
+            {
+                break;
+            }
+        }
+        if(condition)
+        {
+            break;
+        }
+    }
 }

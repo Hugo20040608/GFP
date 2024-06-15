@@ -102,7 +102,7 @@
     description = "當勇者發現低沈的聲音是來自於熊時，熊已經意識到勇者的存在，並追殺勇者，勇者仍逃不了丟失了生命，旅途結束。"
     amount_choice = "0"
     amount_dialogue = "0"
-    is_ending = true
+    is_ending = "fail"
 
     [events.event_4]
     id = "event_4"
@@ -146,7 +146,7 @@
     description = "路上遇到遇到一隻熊，但勇者只有一把刀不足以與熊抗衡，因此丟失了生命"
     amount_choice = "0"
     amount_dialogue = "0"
-    is_ending = true
+    is_ending = "fail"
 
     [events.event_8]
     id = "event_8"
@@ -165,7 +165,7 @@
     description = "藏書是剛好有一名侍衛在看守，一看到有外人出現，直接一槍斃命，勇者因此而喪命。"
     amount_choice = "0"
     amount_dialogue = "0"
-    is_ending = true
+    is_ending = "fail"
 
     [events.event_10]
     id = "event_10"
@@ -215,7 +215,7 @@
     item = "item_1"
     amount_choice = "0"
     amount_dialogue = "0"
-    is_ending = true
+    is_ending = "success"
 
 
     [events.event_14]

@@ -14,6 +14,7 @@ SDL_Rect rect_background;
 int game_is_running = FALSE; 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
+SDL_Renderer *renderer_text = NULL;
 SDL_Texture *texture = NULL;
 TTF_Font* font = NULL;
 SDL_Texture* textTexture = NULL;

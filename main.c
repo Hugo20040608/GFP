@@ -52,6 +52,7 @@ int main(int argc, char *argv[]){
     while(game_is_running){
         // part 1 (背景、描述、背景人物)
         SDL_RenderClear(renderer);
+        SDL_RenderClear(renderer_text);
         render_background(event);
         if(background_character(event, STORY_FILE_NAME) != NULL)
             render_background_character(event);
@@ -120,6 +121,7 @@ int main(int argc, char *argv[]){
         toml_array_t *choices = get_choices_array(event, STORY_FILE_NAME);
         if (choices != NULL){
             SDL_RenderClear(renderer);
+            SDL_RenderClear(renderer_text);
             render_background(event);
             render_choice(choices, &choice);
             free(choices);
@@ -184,6 +186,7 @@ int32_t initialize_window(){
         return FALSE;
     }
     renderer = SDL_CreateRenderer(window, -1, 0);
+    renderer_text = SDL_CreateRenderer(window, -1, 0);
     if(!renderer){
         printf("Error creating renderer: %s\n", SDL_GetError());
         return FALSE;
@@ -287,6 +290,7 @@ void render_background_character(char *event){
 void destroy_window(){
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
+    SDL_DestroyRenderer(renderer_text);
     SDL_DestroyWindow(window);
     SDL_Quit();
     SDL_DestroyTexture(textTexture);
@@ -296,6 +300,7 @@ void destroy_window(){
 
 void render_dialogue(char *character_id, char *text, char *event){
     SDL_RenderClear(renderer);
+    SDL_RenderClear(renderer_text);
     // 蓋掉角色和對話框
     render_background(event);
     // render character
@@ -339,8 +344,8 @@ void render_character(char *character_image){
 }
 
 void render_text(char *text){
-    SDL_SetRenderDrawColor(renderer, 110, 120, 170, 0.8 * 255); // light blue color
-    SDL_RenderFillRect(renderer, &rect_dialog_bg);
+    SDL_SetRenderDrawColor(renderer_text, 110, 120, 170, 0.8 * 255); // light blue color
+    SDL_RenderFillRect(renderer_text, &rect_dialog_bg);
     // Update logic integrated here
     int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - last_frame_time);
     if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME) {
@@ -396,7 +401,7 @@ void render_text(char *text){
     //     textWidth = 90 * VW;
     //     textHeight += lineHeight;
     // }
-    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    textTexture = SDL_CreateTextureFromSurface(renderer_text, textSurface);
     if (!textTexture) {
         printf("Error creating text texture: %s\n", SDL_GetError());
         return;
@@ -407,8 +412,8 @@ void render_text(char *text){
         textSurface->w,
         textSurface->h
     };
-    SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
-    SDL_RenderPresent(renderer);
+    SDL_RenderCopy(renderer_text, textTexture, NULL, &textRect);
+    SDL_RenderPresent(renderer_text);
     free(textToRender);
     SDL_FreeSurface(textSurface);
 }

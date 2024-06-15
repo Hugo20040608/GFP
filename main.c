@@ -51,7 +51,6 @@ int main(int argc, char *argv[]){
     // game loop
     while(game_is_running){
         // part 1 (背景、描述、背景人物)
-        SDL_RenderClear(renderer);
         render_background(event);
         if(background_character(event, STORY_FILE_NAME) != NULL)
             render_background_character(event);
@@ -183,7 +182,7 @@ int32_t initialize_window(){
         printf("Error creating window: %s\n", SDL_GetError());
         return FALSE;
     }
-    renderer = SDL_CreateRenderer(window, -1, 0);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     if(!renderer){
         printf("Error creating renderer: %s\n", SDL_GetError());
         return FALSE;
@@ -222,6 +221,7 @@ void open_screen(){
     }
     SDL_RenderCopy(renderer, texture, NULL, &rect_background);
     SDL_RenderPresent(renderer);
+    SDL_RenderClear(renderer);
     process_input_space();
     free_music();
 }

@@ -70,7 +70,7 @@
     [events.event_1]
     id = "event_1"
     scene_id = "scene_1"
-    description = "上級派勇者去完成一個極限任務：尋找魔法石，勇者開啟旅程，走進神秘森林聽到低沈聲音，又見到一個人影。"
+    description = "上級派勇者去完成一個極限任務：尋找魔法石，勇者開啟旅程，走進神秘森林聽到低沈聲音，又見到一個人影。上級派勇者去完成一個極限任務：尋找魔法石，勇者開啟旅程，走進神秘森林聽到低沈聲音，又見到一個人影。"
     amount_choice = "2"
     amount_dialogue = "0"
     choices = [
@@ -132,7 +132,7 @@
     [events.event_6]
     id = "event_6"
     scene_id = "scene_1"
-    description = "路上遇到遇到一隻熊，但勇者有一把槍，當場斃了牠，不過越走越遠，發現路上足跡越來越少"
+    description = "路上遇到一隻熊，但勇者有一把槍，當場斃了牠，不過越走越遠，發現路上足跡越來越少"
     amount_choice = "2"
     amount_dialogue = "0"
     choices = [
@@ -143,7 +143,7 @@
     [events.event_7]
     id = "event_7"
     scene_id = "scene_1"
-    description = "路上遇到遇到一隻熊，但勇者只有一把刀不足以與熊抗衡，因此丟失了生命"
+    description = "路上遇到一隻熊，但勇者只有一把刀不足以與熊抗衡，因此丟失了生命"
     amount_choice = "0"
     amount_dialogue = "0"
     is_ending = true

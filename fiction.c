@@ -466,7 +466,7 @@ int32_t get_choice_table_size(char *event, char *STORY_FILE_NAME)
     return toml_array_nelem(choices);
 }
 
-char *get_item_id(char event, char *STORY_FILE_NAME)
+char *get_item_id(char *event, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];

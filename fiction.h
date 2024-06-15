@@ -20,4 +20,4 @@ int32_t get_table_size(char *table, char *STORY_FILE_NAME);
 char *get_item_description(char *item, char *STORY_FILE_NAME);
 char *get_item_image(char *item, char *STORY_FILE_NAME);
 int32_t get_choice_table_size(char *event, char *STORY_FILE_NAME);
-char *get_item_id(char event, char *STORY_FILE_NAME);
+char *get_item_id(char *event, char *STORY_FILE_NAME);

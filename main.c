@@ -32,6 +32,7 @@ void read_database_start(char *database, char *event); // 讀取數據庫開始
 void save_event_to_database(char *database, char *event); // 保存事件到數據庫
 void save_item_to_database(char *database, char *item); // 更新存檔的物品
 void refresh_database(char *database); // 刷新數據庫
+void create_database(char *database, char *STORY_FILE_NAME); // 創建數據庫
 // --------------------------------------------------------------------------
 void open_screen(char *key_in); // 開場畫面
 void end_screen_fail(); // 失敗畫面
@@ -53,7 +54,7 @@ int main(int argc, char *argv[]){
         return 0;
     }
     if(strcmp(key_in, "r") == 0){
-        refresh_database("database.txt");
+        create_database("database.txt", STORY_FILE_NAME);
     }
     play_music("raining_village.mp3");
     char event[100] = {0}; // start from database save_event
@@ -119,11 +120,11 @@ int main(int argc, char *argv[]){
         // small part (檢查物品)
         char *item = check_item(event, STORY_FILE_NAME);
         if(item != NULL){
-            char message[200] = {0};
-            snprintf(message, sizeof(message), "你得到了%s", item);
-            render_text(message);
-            save_item_to_database("database.txt", item);
-            process_input_space();
+            // char message[200] = {0};
+            // snprintf(message, sizeof(message), "你得到了%s", item);
+            // render_text(message);
+            // save_item_to_database("database.txt", item);
+            // process_input_space();
         }
         if(!game_is_running){
             save_event_to_database("database.txt", event);
@@ -162,9 +163,11 @@ int main(int argc, char *argv[]){
     free_music();
     if(strcmp(check_endding(event, STORY_FILE_NAME), "success") == 0){
         end_screen_success();
+        create_database("database.txt", STORY_FILE_NAME);
     }
     else{
         end_screen_fail();
+        create_database("database.txt", STORY_FILE_NAME);
     }
     destroy_window();
     return 0;
@@ -750,4 +753,39 @@ void detect_user_input_RD(char *key_in){
             break;
         }
     }
+}
+
+void create_database(char *database, char *STORY_FILE_NAME)
+{
+    FILE *fp = fopen(database, "w");
+    if (fp == NULL) {
+        printf("Error opening database file\n");
+        return;
+    }
+    fprintf(fp, "save_event\nevent_1\n");
+    char **scene_name_list = calloc(get_table_size("scenes", STORY_FILE_NAME), sizeof(char *));
+    for(int32_t i=0; i<get_table_size("scenes", STORY_FILE_NAME); i++){
+        scene_name_list[i] = calloc(100, sizeof(char));
+    }
+    get_table_name_list(scene_name_list, "scenes", STORY_FILE_NAME);
+    for(int32_t i=0; i<get_table_size("scenes", STORY_FILE_NAME); i++){
+        fprintf(fp, "%s\n0\n", scene_name_list[i]);
+    }
+    char **character_name_list = calloc(get_table_size("characters", STORY_FILE_NAME), sizeof(char *));
+    for(int32_t i=0; i<get_table_size("characters", STORY_FILE_NAME); i++){
+        character_name_list[i] = calloc(100, sizeof(char));
+    }
+    get_table_name_list(character_name_list, "characters", STORY_FILE_NAME);
+    for(int32_t i=0; i<get_table_size("characters", STORY_FILE_NAME); i++){
+        fprintf(fp, "%s\n0\n", character_name_list[i]);
+    }
+    char **item_name_list = calloc(get_table_size("items", STORY_FILE_NAME), sizeof(char *));
+    for(int32_t i=0; i<get_table_size("items", STORY_FILE_NAME); i++){
+        item_name_list[i] = calloc(100, sizeof(char));
+    }
+    get_table_name_list(item_name_list, "items", STORY_FILE_NAME);
+    for(int32_t i=0; i<get_table_size("items", STORY_FILE_NAME); i++){
+        fprintf(fp, "%s\n0\n", item_name_list[i]);
+    }
+    fclose(fp);
 }

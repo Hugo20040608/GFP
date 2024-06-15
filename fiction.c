@@ -310,3 +310,53 @@ char *check_item(char *event, char *STORY_FILE_NAME)
     fclose(fp);
     return NULL;
 }
+
+void get_table_name_list(char **table_name_list ,char *table, char *STORY_FILE_NAME)
+{
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
+    char errbuf[200];
+    toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
+    if (index == 0)
+    {
+        printf("Error: %s\n", errbuf);
+        return NULL;
+    }
+    toml_table_t* target_table = toml_table_in(index, table);
+    if (target_table == 0)
+    {
+        printf("Error: %s\n", table);
+        return NULL;
+    }
+    toml_table_t *tmp_table = NULL;
+    for(int i = 0; i < target_table->ntab; i++)
+    {
+        tmp_table = target_table->tab[i];
+        toml_datum_t name = toml_string_in(tmp_table, "name");
+        if (!name.ok)
+        {
+            // printf("Error: %s\n", "name not found");
+            return NULL;
+        }
+        table_name_list[i] = name.u.s;
+    }
+}
+
+int32_t get_table_size(char *table, char *STORY_FILE_NAME)
+{
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
+    char errbuf[200];
+    toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
+    if (index == 0)
+    {
+        printf("Error: %s\n", errbuf);
+        return -1;
+    }
+    toml_table_t* target_table = toml_table_in(index, table);
+    if (target_table == 0)
+    {
+        printf("Error: %s\n", table);
+        return -1;
+    }
+    fclose(fp);
+    return target_table->ntab;
+}

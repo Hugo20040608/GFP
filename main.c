@@ -19,14 +19,14 @@ void render_background(char *event); // 渲染背景
 void render_description(char *event); // 渲染描述
 void render_background_character(char *event); // 渲染背景人物
 void render_dialogue(char *character_id, char *text, char *event); // 渲染對話
-void render_choice(toml_array_t *choices, int32_t *choice); // 渲染選項
+void render_choice(toml_array_t *choices, int32_t *choice, char *event); // 渲染選項
 // --------------------------------------------------------------------------
 void render_character(char *character_image); // 渲染角色
 void render_text(char *text); // 渲染文字
 void render_item(char *item_image); // 渲染物品
 // --------------------------------------------------------------------------
 void process_input_space(); // 處理空白鍵
-int32_t detect_user_input_number(); // 檢測用戶輸入數字
+int32_t detect_user_input_number(int32_t range); // 檢測用戶輸入數字
 void detect_user_input_RD(char *key_in); // 檢測用戶輸入R或D
 // --------------------------------------------------------------------------
 void read_database_start(char *database, char *event); // 讀取數據庫開始
@@ -119,9 +119,12 @@ int main(int argc, char *argv[]){
         free(dialogue);
         // small part (檢查物品)
         char *item = check_item(event, STORY_FILE_NAME);
+        char *item_id = get_item_id(event, STORY_FILE_NAME);
         if(item != NULL){
-            char *message = get_item_description(item, STORY_FILE_NAME);
-            render_item(get_item_image(item, STORY_FILE_NAME));
+            char *message = get_item_description(item_id, STORY_FILE_NAME);
+            char *item_image = get_item_image(item_id, STORY_FILE_NAME);
+            render_item(item_image);
+            free(item_image);
             currentWordIndex = 0;
             totalWords = 0;
             while(1){
@@ -146,7 +149,7 @@ int main(int argc, char *argv[]){
         if (choices != NULL){
             SDL_RenderClear(renderer);
             render_background(event);
-            render_choice(choices, &choice);
+            render_choice(choices, &choice, event);
             free(choices);
         }
         if(!game_is_running){
@@ -463,7 +466,7 @@ void render_text(char *text){
     SDL_FreeSurface(textSurface);
 }
 
-void render_choice(toml_array_t *choices, int32_t *choice){
+void render_choice(toml_array_t *choices, int32_t *choice, char *event){
     // 把選項連結起來，並且加上選項編號和換行符號
     char choice_string[1000]={0};
     char index[10]={0};

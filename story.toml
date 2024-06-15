@@ -64,7 +64,7 @@
     id = "item_4"
     name = "南村鑰匙"
     icon_image = "key2.png"
-    description = "勇者得到了一把銅色的北村的鑰匙，是打開寶箱的關鍵。"
+    description = "勇者得到了一把銅色的南村的鑰匙，是打開寶箱的關鍵。"
 
 [events]
     [events.event_1]
@@ -92,7 +92,7 @@
     { character_id = "character_2", text = "不過我也不清楚是東城還是西城，我直覺感覺是東城。" }
     ]
     choices = [
-        { text = "相信老人，選擇東邊的那座城綁前往", next_event_id = "event_4" },
+        { text = "相信老人，選擇東邊的那座城堡前往", next_event_id = "event_4" },
         { text = "不相信老人，選擇往西邊的那座城前往", next_event_id = "event_5" }
     ]
 
@@ -121,7 +121,7 @@
     [events.event_5]
     id = "event_5"
     scene_id = "scene_1"
-    description = "在前往西城的路上發現有一把槍及一把刀，為了生命安全斯要一個武器"
+    description = "在前往西城的路上發現有一把槍及一把刀，為了生命安全要撿起一個武器"
     amount_choice = "2"
     amount_dialogue = "0"
     choices = [

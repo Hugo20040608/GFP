@@ -233,7 +233,7 @@ void open_screen(){
     }
     SDL_RenderCopy(renderer, texture, NULL, &rect_background);
     // render r button
-    SDL_Surface* surface = IMG_Load("img/game_start_r_btn.png");
+    surface = IMG_Load("img/game_start_r_btn.png");
     if (!surface) {
         printf("Error creating surface: %s\n", IMG_GetError());
         return;
@@ -246,7 +246,7 @@ void open_screen(){
     }
     SDL_RenderCopy(renderer, texture, NULL, &r_btn_postion);
     // render d button
-    SDL_Surface* surface = IMG_Load("img/game_start_d_btn.png");
+    surface = IMG_Load("img/game_start_d_btn.png");
     if (!surface) {
         printf("Error creating surface: %s\n", IMG_GetError());
         return;

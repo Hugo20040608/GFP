@@ -51,6 +51,7 @@ int main(int argc, char *argv[]){
     // game loop
     while(game_is_running){
         // part 1 (背景、描述、背景人物)
+        SDL_RenderClear(renderer);
         render_background(event);
         if(background_character(event, STORY_FILE_NAME) != NULL)
             render_background_character(event);
@@ -118,6 +119,8 @@ int main(int argc, char *argv[]){
         int32_t choice = 0;
         toml_array_t *choices = get_choices_array(event, STORY_FILE_NAME);
         if (choices != NULL){
+            SDL_RenderClear(renderer);
+            render_background(event);
             render_choice(choices, &choice);
             free(choices);
         }
@@ -292,6 +295,7 @@ void destroy_window(){
 }
 
 void render_dialogue(char *character_id, char *text, char *event){
+    SDL_RenderClear(renderer);
     // 蓋掉角色和對話框
     render_background(event);
     // render character

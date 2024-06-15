@@ -31,7 +31,6 @@ void detect_user_input_RD(char *key_in); // 檢測用戶輸入R或D
 void read_database_start(char *database, char *event); // 讀取數據庫開始
 void save_event_to_database(char *database, char *event); // 保存事件到數據庫
 void save_item_to_database(char *database, char *item); // 更新存檔的物品
-void refresh_database(char *database); // 刷新數據庫
 void create_database(char *database, char *STORY_FILE_NAME); // 創建數據庫
 // --------------------------------------------------------------------------
 void open_screen(char *key_in); // 開場畫面
@@ -658,51 +657,6 @@ void save_item_to_database(char *database, char *item)
         if(strstr(database_content[i], item) != NULL){
             strcpy(database_content[i+1], "1\n");
             break;
-        }
-    }
-    fp = fopen(database, "w");
-    for(int32_t i=0; i<counter; i++){
-        fprintf(fp, "%s", database_content[i]);
-    }
-    fclose(fp);
-    for(int32_t i=0; i<counter; i++){
-        free(database_content[i]);
-    }
-    free(database_content);
-    return;
-}
-
-void refresh_database(char *database)
-{
-    FILE *fp = fopen(database, "r");
-    if (fp == NULL) {
-        printf("Error opening database file\n");
-        return;
-    }
-    char line[256];
-    int32_t counter = 0;
-    while (fgets(line, sizeof(line), fp)) {
-        counter++;
-    }
-    char **database_content = calloc(counter, sizeof(char *));
-    for(int32_t i=0; i<counter; i++){
-        database_content[i] = calloc(100, sizeof(char));
-    }
-    fseek(fp, 0, SEEK_SET);
-    for(int32_t i=0; i<counter; i++){
-        fgets(line, sizeof(line), fp);
-        strcpy(database_content[i], line);
-    }
-    fclose(fp);
-    for(int32_t i=0; i<counter; i++){
-        if(strstr(database_content[i], "save_event") != NULL){
-            strcpy(database_content[i+1], "event_1\n");
-            break;
-        }
-    }
-    for(int32_t i=3; i<counter; i++){
-        if(i%2 == 1){
-            strcpy(database_content[i], "0\n");
         }
     }
     fp = fopen(database, "w");

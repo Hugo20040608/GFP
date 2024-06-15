@@ -319,25 +319,34 @@ void get_table_name_list(char **table_name_list ,char *table, char *STORY_FILE_N
     if (index == 0)
     {
         printf("Error: %s\n", errbuf);
-        return NULL;
+        return;
     }
-    toml_table_t* target_table = toml_table_in(index, table);
+    toml_table_t *target_table = toml_table_in(index, table);
     if (target_table == 0)
     {
         printf("Error: %s\n", table);
-        return NULL;
+        return;
     }
     toml_table_t *tmp_table = NULL;
-    for(int i = 0; i < target_table->ntab; i++)
+    char key_str[30] = {0};
+    strcpy(key_str, table);
+    key_str[strlen(key_str) - 1] = '\0';
+    strcat(key_str, "_");
+    for(int i = 0; i < toml_table_ntab(target_table); i++)
     {
-        tmp_table = target_table->tab[i];
+        snprintf(key_str + strlen(key_str), 20 - strlen(key_str), "%d", i+1);
+        tmp_table = toml_table_in(target_table, key_str);
         toml_datum_t name = toml_string_in(tmp_table, "name");
         if (!name.ok)
         {
             // printf("Error: %s\n", "name not found");
-            return NULL;
+            return;
         }
         table_name_list[i] = name.u.s;
+        memset(key_str, 0, 30);
+        strcpy(key_str, table);
+        key_str[strlen(key_str) - 1] = '\0';
+        strcat(key_str, "_");
     }
 }
 
@@ -358,5 +367,5 @@ int32_t get_table_size(char *table, char *STORY_FILE_NAME)
         return -1;
     }
     fclose(fp);
-    return target_table->ntab;
+    return toml_table_ntab(target_table);
 }

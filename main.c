@@ -218,6 +218,18 @@ void setup(){
         WINDOW_WIDTH,
         WINDOW_HEIGHT
     };
+    r_btn_postion = (SDL_Rect){
+        113,
+        594,
+        636,
+        144
+    };
+    d_btn_postion = (SDL_Rect){
+        113,
+        848,
+        847,
+        144
+    };
 }
 // open screen
 void open_screen(char *key_in){
@@ -234,6 +246,32 @@ void open_screen(char *key_in){
         return;
     }
     SDL_RenderCopy(renderer, texture, NULL, &rect_background);
+    // render r button
+    surface = IMG_Load("img/game_start_r_btn.png");
+    if (!surface) {
+        printf("Error creating surface: %s\n", IMG_GetError());
+        return;
+    }
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (!texture) {
+        printf("Error creating texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(surface); // Make sure to free the surface before returning
+        return;
+    }
+    SDL_RenderCopy(renderer, texture, NULL, &r_btn_postion);
+    // render d button
+    surface = IMG_Load("img/game_start_d_btn.png");
+    if (!surface) {
+        printf("Error creating surface: %s\n", IMG_GetError());
+        return;
+    }
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (!texture) {
+        printf("Error creating texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(surface); // Make sure to free the surface before returning
+        return;
+    }
+    SDL_RenderCopy(renderer, texture, NULL, &d_btn_postion);
     SDL_RenderPresent(renderer);
     detect_user_input_RD(key_in);
     free_music();

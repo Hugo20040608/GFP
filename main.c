@@ -23,6 +23,7 @@ void render_choice(toml_array_t *choices, int32_t *choice); // 渲染選項
 // --------------------------------------------------------------------------
 void render_character(char *character_image); // 渲染角色
 void render_text(char *text); // 渲染文字
+void render_item(char *item_image); // 渲染物品
 // --------------------------------------------------------------------------
 void process_input_space(); // 處理空白鍵
 int32_t detect_user_input_number(); // 檢測用戶輸入數字
@@ -119,11 +120,18 @@ int main(int argc, char *argv[]){
         // small part (檢查物品)
         char *item = check_item(event, STORY_FILE_NAME);
         if(item != NULL){
-            // char message[200] = {0};
-            // snprintf(message, sizeof(message), "你得到了%s", item);
-            // render_text(message);
-            // save_item_to_database("database.txt", item);
-            // process_input_space();
+            char *message = get_item_description(item, STORY_FILE_NAME);
+            render_item(get_item_image(item, STORY_FILE_NAME));
+            currentWordIndex = 0;
+            totalWords = 0;
+            while(1){
+                render_text(message);
+                if(currentWordIndex >= totalWords){
+                    process_input_space();
+                    break;
+                }
+            }
+            save_item_to_database("database.txt", item);
         }
         if(!game_is_running){
             save_event_to_database("database.txt", event);
@@ -438,17 +446,6 @@ void render_text(char *text){
         printf("Error creating text surface: %s\n", TTF_GetError());
         return;
     }
-    // int textWidth = 0;
-    // int textHeight = 0;
-    // int lineHeight = 20;
-    // if (TTF_SizeUTF8(font, textToRender, &textWidth, &textHeight) != 0) {
-    //     printf("Error getting text size: %s\n", TTF_GetError());
-    //     return;
-    // }
-    // if(textWidth > 90 * VW){
-    //     textWidth = 90 * VW;
-    //     textHeight += lineHeight;
-    // }
     textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
     if (!textTexture) {
         printf("Error creating text texture: %s\n", SDL_GetError());
@@ -491,13 +488,13 @@ void render_choice(toml_array_t *choices, int32_t *choice){
     {
         render_text(choice_string);
         if(currentWordIndex >= totalWords){
-            *choice = detect_user_input_number();
+            *choice = detect_user_input_number(get_choice_table_size(event, STORY_FILE_NAME));
             break;
         }
     }
 }
 
-int32_t detect_user_input_number(){
+int32_t detect_user_input_number(int32_t range){
     SDL_Event event;
     int number = 0;
     int isNumberEntered = 0;
@@ -505,7 +502,7 @@ int32_t detect_user_input_number(){
     while (!isNumberEntered) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym >= SDLK_0 && event.key.keysym.sym <= SDLK_9) {
+                if (event.key.keysym.sym >= SDLK_0 && event.key.keysym.sym <= SDLK_9 && event.key.keysym.sym - SDLK_0 <= range && event.key.keysym.sym - SDLK_0 > 0) {
                     number = event.key.keysym.sym - SDLK_0;
                     isNumberEntered = 1;
                 }
@@ -519,17 +516,6 @@ int32_t detect_user_input_number(){
 
     return number;
 }
-
-// void detect_user_input_escape(){
-//     SDL_Event event;
-//     while (SDL_PollEvent(&event)) {
-//         if (event.type == SDL_KEYDOWN) {
-//             if (event.key.keysym.sym == SDLK_ESCAPE) {
-//                 game_is_running = FALSE;
-//             }
-//         }
-//     }
-// }
 
 void read_database_start(char *database, char *event)
 {
@@ -742,4 +728,29 @@ void create_database(char *database, char *STORY_FILE_NAME)
         fprintf(fp, "%s\n0\n", item_name_list[i]);
     }
     fclose(fp);
+}
+
+void render_item(char *item_image){
+    char filePath[128];
+    snprintf(filePath, sizeof(filePath), "img/%s", item_image);
+    SDL_Surface* itemSurface = IMG_Load(filePath);
+    if (!itemSurface) {
+        printf("Error creating item surface: %s\n", IMG_GetError());
+        return;
+    }
+    SDL_Texture* itemTexture = SDL_CreateTextureFromSurface(renderer, itemSurface);
+    if (!itemTexture) {
+        printf("Error creating item texture: %s\n", SDL_GetError());
+        SDL_FreeSurface(itemSurface); // Make sure to free the surface before returning
+        return;
+    }
+    SDL_Rect itemRect = (SDL_Rect){
+        70*VW,
+        20*VH,
+        10*VW,
+        10*VH
+    };
+    SDL_RenderCopy(renderer, itemTexture, NULL, &itemRect);
+    SDL_RenderPresent(renderer);
+    SDL_FreeSurface(itemSurface);
 }

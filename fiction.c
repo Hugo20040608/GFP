@@ -369,3 +369,99 @@ int32_t get_table_size(char *table, char *STORY_FILE_NAME)
     fclose(fp);
     return toml_table_ntab(target_table);
 }
+
+char *get_item_description(char *item, char *STORY_FILE_NAME)
+{
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
+    char errbuf[200];
+    toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
+    if (index == 0)
+    {
+        printf("Error: %s\n", errbuf);
+        return NULL;
+    }
+    toml_table_t *item_table = toml_table_in(index, "items");
+    if (item == 0)
+    {
+        printf("Error: %s\n", "items not found");
+        return NULL;
+    }
+    toml_table_t *target_item = toml_table_in(item_table, item);
+    if (target_item == 0)
+    {
+        printf("Error: %s\n", "item not found");
+        return NULL;
+    }
+    toml_datum_t description = toml_string_in(target_item, "description");
+    if (!description.ok)
+    {
+        // printf("Error: %s\n", "description not found");
+        return NULL;
+    }
+    fclose(fp);
+    return description.u.s;
+}
+
+char *get_item_image(char *item, char *STORY_FILE_NAME)
+{
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
+    char errbuf[200];
+    toml_table_t* index = toml_parse_file(fp, errbuf, sizeof(errbuf));
+    if (index == 0)
+    {
+        printf("Error: %s\n", errbuf);
+        return NULL;
+    }
+    toml_table_t *item_table = toml_table_in(index, "items");
+    if (item == 0)
+    {
+        printf("Error: %s\n", "items not found");
+        return NULL;
+    }
+    toml_table_t *target_item = toml_table_in(item_table, item);
+    if (target_item == 0)
+    {
+        printf("Error: %s\n", "item not found");
+        return NULL;
+    }
+    toml_datum_t image = toml_string_in(target_item, "icon_image");
+    if (!image.ok)
+    {
+        // printf("Error: %s\n", "image not found");
+        return NULL;
+    }
+    fclose(fp);
+    return image.u.s;
+}
+
+int32_t get_choice_table_size(char *event, char *STORY_FILE_NAME)
+{
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
+    char errbuf[200];
+    toml_table_t *index = toml_parse_file(fp, errbuf, sizeof(errbuf));
+    if (index == 0)
+    {
+        printf("Error: %s\n", errbuf);
+        return -1;
+    }
+    toml_table_t *event_table = toml_table_in(index, "events");
+    if (event == 0)
+    {
+        printf("Error: %s\n", "events not found");
+        return -1;
+    }
+    toml_table_t *target_event = toml_table_in(event_table, event);
+    if (target_event == 0)
+    {
+        printf("Error: %s\n", "event not found");
+        return -1;
+    }
+    toml_array_t *choices = toml_array_in(target_event, "choices");
+    if (choices == 0)
+    {
+        // printf("Error: %s\n", "choices not found");
+        return -1;
+    }
+    fclose(fp);
+    return toml_array_nelem(choices);
+}

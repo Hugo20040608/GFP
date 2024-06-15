@@ -251,7 +251,7 @@ char *check_endding(char *event, char *STORY_FILE_NAME)
         // printf("Error: %s\n", "event not found");
         return NULL;
     }
-    toml_datum_t endding = toml_string_in(target_event, "endding");
+    toml_datum_t endding = toml_string_in(target_event, "is_ending");
     if (endding.ok)
     {
         fclose(fp);

@@ -5,36 +5,35 @@
 int main() {
     FILE *pFile;
     long lSize;
-    char *buffer;
+    char *my_json_string;
     size_t result;
     pFile = fopen("message.txt", "r");
     if (pFile == NULL) {
-        fprintf(stderr, "錯誤：無法打開 input.txt\n");
+        fprintf(stderr, "錯誤：無法打開 message.txt\n");
         return 1;
     }
     fseek(pFile, 0, SEEK_END);
     lSize = ftell(pFile);
     rewind(pFile);
-    buffer = (char *)malloc(sizeof(char) * (lSize + 1));
-    if (buffer == NULL) {
+    my_json_string = (char *)malloc(sizeof(char) * (lSize + 1));
+    if (my_json_string == NULL) {
         fputs("記憶體錯誤", stderr);
         fclose(pFile);
         return 2;
     }
-    result = fread(buffer, 1, lSize, pFile);
+    result = fread(my_json_string, 1, lSize, pFile);
     if (result != lSize) {
         fputs("讀取錯誤", stderr);
         fclose(pFile);
-        free(buffer);
+        free(my_json_string);
         return 3;
     }
-    buffer[lSize] = '\0';
+    my_json_string[lSize] = '\0';
     fclose(pFile);
-    printf("檔案內容：%s\n", buffer);
-    const char *my_json_string = buffer;
-    free(buffer);
+    printf("檔案內容：%s\n", my_json_string);
     // 解析 JSON 字串
     cJSON *json = cJSON_Parse(my_json_string);
+    free(my_json_string);
     if (json == NULL) {
         const char *error_ptr = cJSON_GetErrorPtr();
         if (error_ptr != NULL) {

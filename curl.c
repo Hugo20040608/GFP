@@ -46,9 +46,9 @@ int main(void) {
         snprintf(newdata, sizeof(newdata), "%s%s%s", request_str, "下一個場景:", data);
         next_scene = 1;
     }
-    fp = fopen("input.txt", "w");
-    fwrite(newdata, 1, strlen(newdata), fp);
-    fclose(fp);
+    // fp = fopen("input.txt", "w");
+    // fwrite(newdata, 1, strlen(newdata), fp);
+    // fclose(fp);
     // 轉義 data 中的特殊 JSON 字符
     char *escaped_data = escape_json_string(newdata);
     free(data);  // 釋放原始 data，使用轉義後的字符串

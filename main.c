@@ -608,7 +608,12 @@ void save_event_to_database(char *database, char *event)
     return;
 }
 void end_screen_fail(){
-    play_music("game_over.mp3");
+    srand(time(NULL));
+    int32_t random = rand() % 2;
+    if(random)
+        play_music("game_over.mp3");
+    else
+        play_music("game-over-man.mp3");
     SDL_Surface* surface = IMG_Load("img/game_end_fail.jpg");
     if (!surface) {
         printf("Error creating surface: %s\n", IMG_GetError());

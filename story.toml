@@ -57,7 +57,7 @@
     [items.item_1]
     id = "item_1"
     name = "魔法石"
-    icon_image = "magicstone.jpg"
+    icon_image = "magic_stone2.png"
     description = "勇者得到了一顆閃爍著藍光的魔法石，據說能改變命運。"
 
     [items.item_2]

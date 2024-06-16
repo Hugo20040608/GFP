@@ -76,11 +76,6 @@ int main(int argc, char *argv[]){
                 break;
             }
         }
-        // 這是 "1. 遊戲結束" 的條件
-        if(check_endding(event, STORY_FILE_NAME) != NULL){
-            game_is_running = FALSE;
-            break;
-        }
         if(!game_is_running){
             save_event_to_database("database.txt", event);
             destroy_window();
@@ -137,6 +132,11 @@ int main(int argc, char *argv[]){
             }
             save_item_to_database("database.txt", item);
         }
+        // 這是 "1. 遊戲結束" 的條件
+        if(check_endding(event, STORY_FILE_NAME) != NULL){
+            game_is_running = FALSE;
+            break;
+        }
         if(!game_is_running){
             save_event_to_database("database.txt", event);
             destroy_window();
@@ -164,12 +164,12 @@ int main(int argc, char *argv[]){
         int32_t check_database_result = 1;
         if (choice_table != NULL){
             if(toml_table_nkval(choice_table) > 2){
-                for(int32_t i=3;;i++){
+                for(int32_t i=3;i<toml_table_nkval(choice_table) ;i++){
                     char tmp_key[20] = {0};
                     snprintf(tmp_key, sizeof(tmp_key), "needed_item%d", i-2);
                     toml_datum_t needed_item = toml_string_in(choice_table, tmp_key);
                     char *item_name = get_item_name(needed_item.u.s, STORY_FILE_NAME);
-                    if(check_database("database.txt", item_name)){
+                    if(check_database("database.txt", item_name) == 0){
                         check_database_result = 0;
                         break;
                     }
@@ -775,7 +775,7 @@ void render_item(char *item_image){
         70*VW,
         20*VH,
         10*VW,
-        10*VH
+        15*VH
     };
     SDL_RenderCopy(renderer, itemTexture, NULL, &itemRect);
     SDL_RenderPresent(renderer);

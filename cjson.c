@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <cjson/cJSON.h>
 
-int main() {
+void find_response_by_cjson() {
     FILE *pFile;
     long lSize;
     char *my_json_string;
@@ -71,6 +71,10 @@ int main() {
     }
     // 印出 content 欄位的值
     printf("內容：%s\n", content->valuestring);
+    fp = fopen("input.txt", "ab");
+    fwrite(content->valuestring, 1, strlen(content->valuestring), fp);
+    fclose(fp);
+    printf("內容已寫入 input.txt\n");
     // 清理 cJSON 物件
     cJSON_Delete(json);
     return 0;

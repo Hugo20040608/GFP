@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 #include "escape_json_string.h"
 #include "APIKEY.h"
+int next_scene = 0;
 struct string {
     char *ptr;
     size_t len;
@@ -23,6 +24,7 @@ int main(void) {
     }
     // get file line
     int fLine = 0;
+    char line[1024] = {0};
     while(fgets(line, sizeof(line), fp) != NULL) {
         fLine++;
     }
@@ -35,7 +37,7 @@ int main(void) {
     data[fsize] = 0; // 確保字符串結尾
     fclose(fp);
 
-    char *request_str = "這是一段角色對話台詞，請幫我產生"
+    char *request_str = "這是一段角色對話台詞，請幫我產生";
     char newdata[1024] = {0};
     if(fLine <= 4){
         snprintf(newdata, sizeof(newdata), "%s%s%s", request_str, "下一句對話:", data);

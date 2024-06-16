@@ -30,13 +30,7 @@ int main(void) {
     data[fsize] = 0;
     // 關閉文件
     fclose(fp);
-    // 檢查並替換換行符
-    char *p = data;
-    while ((p = strchr(p, '\n')) != NULL) {
-        *p = '\\';
-        memmove(p + 2, p + 1, strlen(p));
-        *(p + 1) = 'n';
-    }
+    
     // 將文件內容用於 POST 數據
     char post_data[1024] = {0};
     snprintf(post_data, sizeof(post_data), "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", data);

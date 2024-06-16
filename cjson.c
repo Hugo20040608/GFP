@@ -71,10 +71,10 @@ int main() {
         return 1;
     }
     // 印出 content 欄位的值
-    FILE *fp = fopen("input.txt", "ab");
+    FILE *fp = fopen("chatgpt.toml", "ab");
     fwrite(content->valuestring, 1, strlen(content->valuestring), fp);
     fclose(fp);
-    printf("內容已寫入 input.txt\n");
+    printf("內容已寫入 chatgpt.toml\n");
     // printf("內容：%s\n", content->valuestring);
     // 清理 cJSON 物件
     cJSON_Delete(json);

@@ -17,7 +17,7 @@ int main(void) {
     struct string s;
     init_string(&s);
     // 打開文件
-    FILE *fp = fopen("input.txt", "rb");
+    FILE *fp = fopen("story.toml", "rb");
     if (fp == NULL) {
         perror("Cannot open file.");
         return 1;
@@ -37,13 +37,14 @@ int main(void) {
     data[fsize] = 0; // 確保字符串結尾
     fclose(fp);
 
-    char *request_str = "這是一段角色對話台詞，請幫我產生";
-    char newdata[1024] = {0};
+    char *request_str = "請參考story.toml的內容，改寫";
+    char *newdata = calloc(strlen(request_str) + strlen(data) + 1, 1);
+
     if(fLine <= 4){
-        snprintf(newdata, sizeof(newdata), "%s%s%s", request_str, "下一句對話:", data);
+        snprintf(newdata, sizeof(newdata), "%s%s%s", request_str, "角色一的說話方式", data);
     }
     else{
-        snprintf(newdata, sizeof(newdata), "%s%s%s", request_str, "下一個場景:", data);
+        snprintf(newdata, sizeof(newdata), "%s%s%s", request_str, "角色二的說話方式", data);
         next_scene = 1;
     }
     // fp = fopen("input.txt", "w");
@@ -54,7 +55,7 @@ int main(void) {
     free(data);  // 釋放原始 data，使用轉義後的字符串
 
     // 使用轉義後的字符串格式化 JSON
-    char post_data[1024] = {0};
+    char *post_data = calloc(strlen(escaped_data) + 1024, 1);
     int required = snprintf(NULL, 0, "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", escaped_data);
     if (required >= sizeof(post_data)) {
         fprintf(stderr, "Buffer size is too small for the content.\n");

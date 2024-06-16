@@ -43,7 +43,7 @@ int main(void) {
         return 1;
     }
     snprintf(post_data, sizeof(post_data), "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", escaped_data);
-    printf("%s\n", post_data);
+    // printf("%s\n", post_data);
     free(escaped_data); // 釋放轉義後的 data
     curl_global_init(CURL_GLOBAL_ALL);
     curl = curl_easy_init();
@@ -69,7 +69,6 @@ int main(void) {
         res = curl_easy_perform(curl);
         if(res == CURLE_OK) {
             fwrite(s.ptr, 1, s.len, fp);
-            find_response_by_cjson();
         } 
         else {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));

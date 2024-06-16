@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <cjson/cJSON.h>
 
 void find_response_by_cjson() {

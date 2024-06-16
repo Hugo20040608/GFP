@@ -1,72 +1,253 @@
-title = "Mystery at the Manor"
+# 劇本檔
 
-[settings]
-background_music = "suspense_theme.mp3"
-default_background = "manor_evening.jpg"
-
-[characters]
-  [characters.hero]
-  name = "Alex"
-  description = "A curious detective with a keen sense of observation."
-
-  [characters.butler]
-  name = "Mr. Grieves"
-  description = "The old and loyal butler of the manor, knows all its secrets."
-
-  [characters.maid]
-  name = "Sophia"
-  description = "A young maid, who is new to the manor and seems nervous."
-
+# 場景定義
 [scenes]
-  [scenes.intro]
-  background = "manor_gate.jpg"
-  music = "rainy_night.ogg"
-  text = "It was a dark and stormy night as Alex arrived at the old manor."
-  choices = [
-    { text = "Enter the manor.", next_scene = "foyer" },
-    { text = "Look around the garden first.", next_scene = "garden" }
-  ]
+    [scenes.scene_1]
+    id = "scene_1"
+    name = "神秘森林"
+    background_image = "forest_background.png"
+    description = "RANDOM_DESCRIPTION"
 
-  [scenes.foyer]
-  background = "manor_foyer.jpg"
-  music = "creaky_floor.ogg"
-  text = "The foyer was dimly lit, shadows dancing across the old portraits."
-  choices = [
-    { text = "Talk to the butler.", next_scene = "talk_butler" },
-    { text = "Explore the library.", next_scene = "library" }
-  ]
+    [scenes.scene_2]
+    id = "scene_2"
+    name = "古老城堡"
+    background_image = "castle_background.jpg"
+    description = "RANDOM_DESCRIPTION"
 
-  [scenes.garden]
-  background = "manor_garden_night.jpg"
-  music = "windy_leaves.ogg"
-  text = "The garden was lush and mysterious under the moonlight, an eerie silence hanging in the air."
-  choices = [
-    { text = "Inspect the garden shed.", next_scene = "shed" },
-    { text = "Return to the manor entrance.", next_scene = "foyer" }
-  ]
+    [scenes.scene_3]
+    id = "scene_3"
+    name = "村莊廣場"
+    background_image = "village_background.jpg"
+    description = "RANDOM_DESCRIPTION"
 
-[scenes.talk_butler]
-background = "manor_dining_hall.jpg"
-music = "low_murmur.ogg"
-text = "Mr. Grieves welcomed Alex with a cautious glance, 'May I help you with something, sir?'"
-choices = [
-  { text = "Ask about the manor's history.", next_scene = "history" },
-  { text = "Inquire about the recent strange events.", next_scene = "events" }
-]
+    [scenes.scene_4]
+    id = "scene_4"
+    name = "並沒有"
+    background_image = "no_you_dont.jpg"
+    description = "RANDOM_DESCRIPTION"
 
-[scenes.library]
-background = "manor_library.jpg"
-music = "soft_whispers.ogg"
-text = "The library was filled with ancient books, their secrets almost whispering to Alex."
-choices = [
-  { text = "Examine the mysterious book on the table.", next_scene = "book_discovery" },
-  { text = "Look through the window.", next_scene = "window_view" }
-]
+# 人物定義
+[characters]
+    [characters.character_1]
+    id = "character_1"
+    name = "勇者"
+    portrait_image = "hero.jpg"
+    description = "RANDOM_DESCRIPTION"
 
-[scenes.history]
-text = "Mr. Grieves narrated the rich and tumultuous history of the manor, dating back several centuries."
-choices = [
-  { text = "Continue listening.", next_scene = "continue_history" },
-  { text = "Thank him and leave.", next_scene = "foyer" }
-]
+    [characters.character_2]
+    id = "character_2"
+    name = "神秘老人"
+    portrait_image = "old_man.jpg"
+    description = "RANDOM_DESCRIPTION"
 
+    [characters.character_3]
+    id = "character_3"
+    name = "村莊長老"
+    portrait_image = "elder.jpg"
+    description = "RANDOM_DESCRIPTION"
+
+    [characters.character_4]
+    id = "character_4"
+    name = "不要瞎掰好嗎"
+    portrait_image = "dont_hoo_lang.jpg"
+    description = "RANDOM_DESCRIPTION"
+
+# 物品定義
+[items]
+    [items.item_1]
+    id = "item_1"
+    name = "魔法石"
+    icon_image = "magic_stone2.png"
+    description = "RANDOM_DESCRIPTION"
+
+    [items.item_2]
+    id = "item_2"
+    name = "古書"
+    icon_image = "ancientbook.jpg"
+    description = "RANDOM_DESCRIPTION"
+
+    [items.item_3]
+    id = "item_3"
+    name = "北村鑰匙"
+    icon_image = "key1.png"
+    description = "RANDOM_DESCRIPTION"
+
+    [items.item_4]
+    id = "item_4"
+    name = "南村鑰匙"
+    icon_image = "key2.png"
+    description = "RANDOM_DESCRIPTION"
+
+[events]
+    [events.event_1]
+    id = "event_1"
+    scene_id = "scene_1"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "尋找聲音的來源", next_event_id = "event_3" },
+        { text = "跟隨人影", next_event_id = "event_2" }
+    ]
+
+    [events.event_2]
+    id = "event_2"
+    scene_id = "scene_1"
+    character_id = "character_2"
+    amount_choice = "2"
+    amount_dialogue = "4"
+    description = "RANDOM_DESCRIPTION"
+    dialogue = [
+        { character_id = "character_1", text = "RANDOM_DESCRIPTION" },
+        { character_id = "character_2", text = "RANDOM_DESCRIPTION" },
+        { character_id = "character_1", text = "RANDOM_DESCRIPTION" },
+        { character_id = "character_2", text = "RANDOM_DESCRIPTION" }
+    ]
+    choices = [
+        { text = "相信老人，選擇東邊的那座城堡前往", next_event_id = "event_4" },
+        { text = "不相信老人，選擇往西邊的那座城前往", next_event_id = "event_5" }
+    ]
+
+    [events.event_3]
+    id = "event_3"
+    scene_id = "scene_1"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "0"
+    amount_dialogue = "0"
+    is_ending = "fail"
+
+    [events.event_4]
+    id = "event_4"
+    scene_id = "scene_2"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "2"
+    amount_dialogue = "1"
+    dialogue = [
+    { character_id = "character_1", text = "RANDOM_DESCRIPTION" }
+    ]
+    choices = [
+        { text = "RANDOM_DESCRIPTION", next_event_id = "event_8" },
+        { text = "RANDOM_DESCRIPTION", next_event_id = "event_9" }
+    ]
+
+    [events.event_5]
+    id = "event_5"
+    scene_id = "scene_1"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "槍", next_event_id = "event_6" },
+        { text = "刀", next_event_id = "event_7" }
+    ]
+
+    [events.event_6]
+    id = "event_6"
+    scene_id = "scene_1"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "返回走去東城好了", next_event_id = "event_4" },
+        { text = "這就是神秘的原因繼續走", next_event_id = "event_3" }
+    ]
+
+    [events.event_7]
+    id = "event_7"
+    scene_id = "scene_1"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "0"
+    amount_dialogue = "0"
+    is_ending = "fail"
+
+    [events.event_8]
+    id = "event_8"
+    scene_id = "scene_2"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "前往北村", next_event_id = "event_10" },
+        { text = "前往南村", next_event_id = "event_11" }
+    ]
+
+    [events.event_9]
+    id = "event_9"
+    scene_id = "scene_2"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "0"
+    amount_dialogue = "0"
+    is_ending = "fail"
+
+    [events.event_10]
+    id = "event_10"
+    scene_id = "scene_3"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "1"
+    amount_dialogue = "2"
+    item = "item_3"
+    dialogue = [
+    { character_id = "character_1", text = "長老！為了完成任務，我在找尋鑰匙的下落" },
+    { character_id = "character_3", text = "你找對人了！就在我這邊，寶箱就在城堡內" },
+    ]
+    choices = [
+        { text = "回到城堡", next_event_id = "event_12" }
+    ]
+
+    [events.event_11]
+    id = "event_11"
+    scene_id = "scene_3"
+    description = "RANDOM_DESCRIPTION"
+    amount_choice = "1"
+    amount_dialogue = "2"
+    item = "item_4"
+    dialogue = [
+        { character_id = "character_1", text = "長老！為了完成任務，我在找尋鑰匙的下落" },
+        { character_id = "character_3", text = "你找對人了！就在我這邊，寶箱就在城堡內" },
+    ]
+    choices = [
+        { text = "回到城堡", next_event_id = "event_12" }
+    ]
+
+    [events.event_12]
+    id = "event_12"
+    scene_id = "scene_2"
+    description = "其實需要兩把來自北村和南村的鑰匙才能開寶箱"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "我有！", next_event_id = "event_13" , wrong_event_id = "event_15", needed_item1 = "item_3", needed_item2 = "item_4"},
+        { text = "再繼續尋找！", next_event_id = "event_14" }
+    ]
+
+    [events.event_13]
+    id = "event_13"
+    scene_id = "scene_2"
+    description = "恭喜你拿到了神秘的寶石！"
+    item = "item_1"
+    amount_choice = "0"
+    amount_dialogue = "0"
+    is_ending = "success"
+
+
+    [events.event_14]
+    id = "event_14"
+    scene_id = "scene_2"
+    description = "還沒找尋的鑰匙？"
+    amount_choice = "2"
+    amount_dialogue = "0"
+    choices = [
+        { text = "回到北村", next_event_id = "event_10" },
+        { text = "回到南村", next_event_id = "event_11" }
+    ]
+
+    [events.event_15]
+    id = "event_15"
+    scene_id = "scene_4"
+    character_id = "character_4"
+    description = "並沒有！不要瞎掰好嗎！。"
+    amount_choice = "1"
+    amount_dialogue = "0"
+    choices = [
+        { text = "再繼續尋找！", next_event_id = "event_14" }
+    ]

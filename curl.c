@@ -52,7 +52,6 @@ int main(void) {
     size_t post_data_size = strlen(escaped_data) + 1024;
     char *post_data = calloc(post_data_size, 1);
     snprintf(post_data, post_data_size, "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", escaped_data);
-    free(escaped_data);
     // printf("%s\n", post_data);
     free(escaped_data); // 釋放轉義後的 data
     curl_global_init(CURL_GLOBAL_ALL);

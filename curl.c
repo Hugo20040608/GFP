@@ -68,12 +68,12 @@ int main(void) {
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
         // 執行 POST 請求
         res = curl_easy_perform(curl);
-        if(res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        } 
-        else {
+        if(res == CURLE_OK) {
             fwrite(s.ptr, 1, s.len, fp);
             find_response_by_cjson();
+        } 
+        else {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
         }
         fclose(fp);
         curl_slist_free_all(headers);

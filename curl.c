@@ -72,6 +72,7 @@ int main(void) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
         } 
         else {
+            fwrite(s.ptr, 1, s.len, fp);
             find_response_by_cjson();
         }
         fclose(fp);

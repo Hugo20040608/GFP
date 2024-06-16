@@ -20,6 +20,12 @@
     background_image = "village_background.jpg"
     description = "這是一個和平的小村莊，村民們在廣場上忙碌著。"
 
+    [scenes.scene_4]
+    id = "scene_4"
+    name = "並沒有"
+    background_image = "no_you_dont.jpg"
+    description = "並沒有！不要瞎掰好嗎！。"
+
 # 人物定義
 [characters]
     [characters.character_1]
@@ -39,6 +45,12 @@
     name = "村莊長老"
     portrait_image = "elder.jpg"
     description = "村莊的長老，擁有豐富的智慧和經驗。"
+
+    [characters.character_4]
+    id = "character_4"
+    name = "不要瞎掰好嗎"
+    portrait_image = "dont_hoo_lang.jpg"
+    description = "這是一張魔法卡，別瞎掰了。"
 
 # 物品定義
 [items]
@@ -204,7 +216,7 @@
     amount_choice = "2"
     amount_dialogue = "0"
     choices = [
-        { text = "我有！", next_event_id = "event_13" },
+        { text = "我有！", next_event_id = "event_13" , wrong_event_id = "event_14", need_item = "item_3", need_item2 = "item_4"},
         { text = "再繼續尋找！", next_event_id = "event_14" }
     ]
 
@@ -229,4 +241,12 @@
         { text = "回到南村", next_event_id = "event_11" }
     ]
 
-
+    [events.event_15]
+    id = "event_15"
+    scene_id = "scene_4"
+    description = "並沒有！不要瞎掰好嗎！。"
+    amount_choice = "1"
+    amount_dialogue = "0"
+    choices = [
+        { text = "再繼續尋找！", next_event_id = "event_14" }
+    ]

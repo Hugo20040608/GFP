@@ -261,7 +261,7 @@ char *check_endding(char *event, char *STORY_FILE_NAME)
     return NULL;
 }
 
-char *check_item(char *event, char *STORY_FILE_NAME)
+char *get_event_item_name(char *event, char *STORY_FILE_NAME)
 {
     FILE *fp = fopen(STORY_FILE_NAME, "r");
     char errbuf[200];
@@ -496,4 +496,36 @@ char *get_item_id(char *event, char *STORY_FILE_NAME)
     }
     fclose(fp);
     return item.u.s;
+}
+
+char *get_item_name(char *item, char *STORY_FILE_NAME)
+{
+    FILE *fp = fopen(STORY_FILE_NAME, "r");
+    char errbuf[200];
+    toml_table_t *index = toml_parse_file(fp, errbuf, sizeof(errbuf));
+    if (index == 0)
+    {
+        printf("Error: %s\n", errbuf);
+        return NULL;
+    }
+    toml_table_t *item_table = toml_table_in(index, "items");
+    if (item == 0)
+    {
+        printf("Error: %s\n", "items not found");
+        return NULL;
+    }
+    toml_table_t *target_item = toml_table_in(item_table, item);
+    if (target_item == 0)
+    {
+        printf("Error: %s\n", "item not found");
+        return NULL;
+    }
+    toml_datum_t name = toml_string_in(target_item, "name");
+    if (!name.ok)
+    {
+        // printf("Error: %s\n", "name not found");
+        return NULL;
+    }
+    fclose(fp);
+    return name.u.s;
 }

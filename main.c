@@ -30,6 +30,7 @@ int32_t detect_user_input_number(int32_t range); // 檢測用戶輸入數字
 void detect_user_input_RD(char *key_in); // 檢測用戶輸入R或D
 // --------------------------------------------------------------------------
 void read_database_start(char *database, char *event); // 讀取數據庫開始
+int32_t check_database(char *database, char *name); // 檢查數據庫
 void save_event_to_database(char *database, char *event); // 保存事件到數據庫
 void save_item_to_database(char *database, char *item); // 更新存檔的物品
 void create_database(char *database, char *STORY_FILE_NAME); // 創建數據庫
@@ -118,7 +119,7 @@ int main(int argc, char *argv[]){
         }
         free(dialogue);
         // small part (檢查物品)
-        char *item = check_item(event, STORY_FILE_NAME);
+        char *item = get_event_item_name(event, STORY_FILE_NAME);
         char *item_id = get_item_id(event, STORY_FILE_NAME);
         if(item != NULL){
             char *message = get_item_description(item_id, STORY_FILE_NAME);
@@ -160,13 +161,33 @@ int main(int argc, char *argv[]){
         }
         // part 4 (選擇後的事件)
         toml_table_t *choice_table = toml_table_at(choices, choice-1);
+        int32_t check_database_result = 1;
         if (choice_table != NULL){
-            toml_datum_t next_event_datum = toml_string_in(choice_table, "next_event_id");
-            if (!next_event_datum.ok){
-                // printf("Error: %s\n", "next_event not found");
-                return 0;
+            if(toml_array_nelem(choice_table) > 2){
+                for(int32_t i=3;;i++){
+                    toml_datum_t needed_item = toml_string_at(choice_table, i);
+                    char *item_name = get_item_name(needed_item.u.s, STORY_FILE_NAME);
+                    if(check_database("database.txt", item_name)){
+                        check_database_result = 0;
+                        break;
+                    }
+                }
             }
-            strncpy(event, next_event_datum.u.s, sizeof(event));
+            if(check_database_result){
+                toml_datum_t next_event_datum = toml_string_in(choice_table, "next_event_id");
+                if (!next_event_datum.ok){
+                    // printf("Error: %s\n", "next_event not found");
+                    return 0;
+                }
+                strncpy(event, next_event_datum.u.s, sizeof(event));
+            }
+            else{
+                toml_datum_t next_event_datum = toml_string_in(choice_table, "wrong_event_id");
+                if (!next_event_datum.ok){
+                    // printf("Error: %s\n", "next_event not found");
+                    return 0;
+                }
+                strncpy(event, next_event_datum.u.s, sizeof(event));
         }
         free(choice_table);
     }
@@ -756,4 +777,27 @@ void render_item(char *item_image){
     SDL_RenderCopy(renderer, itemTexture, NULL, &itemRect);
     SDL_RenderPresent(renderer);
     SDL_FreeSurface(itemSurface);
+}
+
+int32_t check_database(char *database, char *name)
+{
+    FILE *fp = fopen(database, "r");
+    if (fp == NULL) {
+        printf("Error opening database file\n");
+        return 0;
+    }
+    char line[256];
+    while (fgets(line, sizeof(line), fp)) {
+        if(strstr(line, name) != NULL){
+            fgets(line, sizeof(line), fp);
+            if(strstr(line, "1") != NULL){
+                fclose(fp);
+                return 1;
+            }
+            else{
+                fclose(fp);
+                return 0;
+            }
+        }
+    }
 }

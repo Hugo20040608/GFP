@@ -49,14 +49,10 @@ int main(void) {
     free(data);  // 釋放原始 data，使用轉義後的字符串
 
     // 使用轉義後的字符串格式化 JSON
-    char *post_data = calloc(strlen(escaped_data) + 1024, 1);
-    int required = snprintf(NULL, 0, "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", escaped_data);
-    if (required >= sizeof(post_data)) {
-        fprintf(stderr, "Buffer size is too small for the content.\n");
-        free(escaped_data);
-        return 1;
-    }
-    snprintf(post_data, sizeof(post_data), "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", escaped_data);
+    size_t post_data_size = strlen(escaped_data) + 1024;
+    char *post_data = calloc(post_data_size, 1);
+    snprintf(post_data, post_data_size, "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", escaped_data);
+    free(escaped_data);
     // printf("%s\n", post_data);
     free(escaped_data); // 釋放轉義後的 data
     curl_global_init(CURL_GLOBAL_ALL);

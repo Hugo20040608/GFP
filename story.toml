@@ -216,7 +216,7 @@
     amount_choice = "2"
     amount_dialogue = "0"
     choices = [
-        { text = "我有！", next_event_id = "event_13" , wrong_event_id = "event_14", needed_item1 = "item_3", needed_item2 = "item_4"},
+        { text = "我有！", next_event_id = "event_13" , wrong_event_id = "event_15", needed_item1 = "item_3", needed_item2 = "item_4"},
         { text = "再繼續尋找！", next_event_id = "event_14" }
     ]
 

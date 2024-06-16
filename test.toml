@@ -149,7 +149,7 @@
     amount_dialogue = "0"
     choices = [
         { text = "返回走去東城好了", next_event_id = "event_4" },
-        { text = "這就是神秘的原因繼續走", next_event_id = "event_3" }
+        { text = "RANDOM_DESCRIPTION", next_event_id = "event_3" }
     ]
 
     [events.event_7]
@@ -187,8 +187,8 @@
     amount_dialogue = "2"
     item = "item_3"
     dialogue = [
-    { character_id = "character_1", text = "長老！為了完成任務，我在找尋鑰匙的下落" },
-    { character_id = "character_3", text = "你找對人了！就在我這邊，寶箱就在城堡內" },
+    { character_id = "character_1", text = "RANDOM_DESCRIPTION" },
+    { character_id = "character_3", text = "RANDOM_DESCRIPTION" },
     ]
     choices = [
         { text = "回到城堡", next_event_id = "event_12" }
@@ -202,8 +202,8 @@
     amount_dialogue = "2"
     item = "item_4"
     dialogue = [
-        { character_id = "character_1", text = "長老！為了完成任務，我在找尋鑰匙的下落" },
-        { character_id = "character_3", text = "你找對人了！就在我這邊，寶箱就在城堡內" },
+        { character_id = "character_1", text = "RANDOM_DESCRIPTION" },
+        { character_id = "character_3", text = "RANDOM_DESCRIPTION" },
     ]
     choices = [
         { text = "回到城堡", next_event_id = "event_12" }
@@ -212,7 +212,7 @@
     [events.event_12]
     id = "event_12"
     scene_id = "scene_2"
-    description = "其實需要兩把來自北村和南村的鑰匙才能開寶箱"
+    description = "RANDOM_DESCRIPTION"
     amount_choice = "2"
     amount_dialogue = "0"
     choices = [
@@ -223,7 +223,7 @@
     [events.event_13]
     id = "event_13"
     scene_id = "scene_2"
-    description = "恭喜你拿到了神秘的寶石！"
+    description = "RANDOM_DESCRIPTION"
     item = "item_1"
     amount_choice = "0"
     amount_dialogue = "0"
@@ -233,7 +233,7 @@
     [events.event_14]
     id = "event_14"
     scene_id = "scene_2"
-    description = "還沒找尋的鑰匙？"
+    description = "RANDOM_DESCRIPTION"
     amount_choice = "2"
     amount_dialogue = "0"
     choices = [

@@ -216,7 +216,7 @@
     amount_choice = "2"
     amount_dialogue = "0"
     choices = [
-        { text = "我有！", next_event_id = "event_13" , wrong_event_id = "event_14", need_item = "item_3", need_item2 = "item_4"},
+        { text = "我有！", next_event_id = "event_13" , wrong_event_id = "event_14", needed_item1 = "item_3", needed_item2 = "item_4"},
         { text = "再繼續尋找！", next_event_id = "event_14" }
     ]
 
@@ -244,6 +244,7 @@
     [events.event_15]
     id = "event_15"
     scene_id = "scene_4"
+    character_id = "character_4"
     description = "並沒有！不要瞎掰好嗎！。"
     amount_choice = "1"
     amount_dialogue = "0"

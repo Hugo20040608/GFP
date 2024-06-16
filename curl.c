@@ -36,7 +36,7 @@ int main(void) {
     data[fsize] = 0; // 確保字符串結尾
     fclose(fp);
 
-    char request_str[300] = "請參考story.toml的內容，改寫description，其餘不變，以下是story.toml的內容";
+    char request_str[300] = "請參考story.toml的內容，擴寫description的內容，其餘不變，以下是story.toml的內容";
     size_t newdata_size = strlen(request_str) + strlen(data) + 50; // 50 為額外字符和安全邊際
     char *newdata = calloc(newdata_size, 1);
     if (newdata == NULL) {

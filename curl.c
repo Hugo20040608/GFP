@@ -36,7 +36,7 @@ int main(void) {
     data[fsize] = 0; // 確保字符串結尾
     fclose(fp);
 
-    char prompt[500] = "生出三個場景兩個物品三個角色十五個事件，不要加```，務必遵守以下範例格式：";
+    char prompt[500] = "生出三個隨機場景兩個隨機物品三個隨機角色十五個隨機事件，不要加```，務必遵守以下範例格式：";
     size_t newdata_size = strlen(prompt) + strlen(data) + 50; // 50 為額外字符和安全邊際
     char *newdata = calloc(newdata_size, 1);
     if (newdata == NULL) {

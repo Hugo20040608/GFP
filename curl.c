@@ -69,7 +69,6 @@ int main(void) {
         res = curl_easy_perform(curl);
         if(res == CURLE_OK) {
             fwrite(s.ptr, 1, s.len, fp);
-            find_response_by_cjson();
         } 
         else {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));

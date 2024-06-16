@@ -166,7 +166,7 @@ int main(int argc, char *argv[]){
             if(toml_table_nkval(choice_table) > 2){
                 for(int32_t i=3;;i++){
                     char tmp_key[20] = {0};
-                    snprintf(tmp_key, sizeof(tmp_key), "need_item%d", i-2);
+                    snprintf(tmp_key, sizeof(tmp_key), "needed_item%d", i-2);
                     toml_datum_t needed_item = toml_string_in(choice_table, tmp_key);
                     char *item_name = get_item_name(needed_item.u.s, STORY_FILE_NAME);
                     if(check_database("database.txt", item_name)){

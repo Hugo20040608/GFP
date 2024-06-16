@@ -31,7 +31,7 @@ int main() {
     }
     my_json_string[lSize] = '\0';
     fclose(pFile);
-    printf("檔案內容：%s\n", my_json_string);
+    // printf("檔案內容：%s\n", my_json_string);
     // 解析 JSON 字串
     cJSON *json = cJSON_Parse(my_json_string);
     free(my_json_string);
@@ -72,8 +72,10 @@ int main() {
     }
     // 印出 content 欄位的值
     FILE *fp = fopen("input.txt", "ab");
-    fread(content->valuestring, 1, strlen(content->valuestring), fp);
-    printf("內容：%s\n", content->valuestring);
+    fwrite(content->valuestring, 1, strlen(content->valuestring), fp);
+    fclose(fp);
+    printf("內容已寫入 input.txt\n");
+    // printf("內容：%s\n", content->valuestring);
     // 清理 cJSON 物件
     cJSON_Delete(json);
     return 0;

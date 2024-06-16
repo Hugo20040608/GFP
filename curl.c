@@ -73,26 +73,6 @@ int main(void) {
         } 
         else {
             fwrite(s.ptr, 1, s.len, fp);
-            // // Parse JSON
-            // cJSON *json = cJSON_Parse(s.ptr);
-            // if (json == NULL) {
-            //     const char *error_ptr = cJSON_GetErrorPtr();
-            //     if (error_ptr != NULL) {
-            //         fprintf(stderr, "Error before: %s\n", error_ptr);
-            //     }
-            // } else {
-            //     // Navigate to the nested structure
-            //     cJSON *choices = cJSON_GetObjectItemCaseSensitive(json, "choices");
-            //     cJSON *first_choice = cJSON_GetArrayItem(choices, 0);
-            //     cJSON *message = cJSON_GetObjectItemCaseSensitive(first_choice, "message");
-            //     cJSON *content = cJSON_GetObjectItemCaseSensitive(message, "content");
-
-            //     if (cJSON_IsString(content) && (content->valuestring != NULL)) {
-            //         fwrite(content->valuestring, 1, strlen(content->valuestring), fp);
-            //         printf("Received: %s\n", content->valuestring);
-            //     }
-            //     cJSON_Delete(json);
-            // }
         }
         fclose(fp);
         curl_slist_free_all(headers);

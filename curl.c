@@ -21,6 +21,11 @@ int main(void) {
         perror("Cannot open file.");
         return 1;
     }
+    // get file line
+    int fLine = 0;
+    while(fgets(line, sizeof(line), fp) != NULL) {
+        fLine++;
+    }
     fseek(fp, 0, SEEK_END);
     long fsize = ftell(fp);
     fseek(fp, 0, SEEK_SET);
@@ -30,8 +35,17 @@ int main(void) {
     data[fsize] = 0; // 確保字符串結尾
     fclose(fp);
 
+    char *request_str = "這是一段角色對話台詞，請幫我產生"
+    char newdata[1024] = {0};
+    if(fLine <= 4){
+        snprintf(newdata, sizeof(newdata), "%s%s%s", request_str, "下一句對話:", data);
+    }
+    else{
+        snprintf(newdata, sizeof(newdata), "%s%s%s", request_str, "下一個場景:", data);
+        next_scene = 1;
+    }
     // 轉義 data 中的特殊 JSON 字符
-    char *escaped_data = escape_json_string(data);
+    char *escaped_data = escape_json_string(newdata);
     free(data);  // 釋放原始 data，使用轉義後的字符串
 
     // 使用轉義後的字符串格式化 JSON
@@ -69,7 +83,7 @@ int main(void) {
         res = curl_easy_perform(curl);
         if(res == CURLE_OK) {
             fwrite(s.ptr, 1, s.len, fp);
-        } 
+        }
         else {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
         }

@@ -98,10 +98,10 @@
     amount_dialogue = "4"
     description = "勇者發現聲音的來源是一位神秘老人。老人告訴他，在古老城堡裡的一個古書記載著魔法石的線索。"
     dialogue = [
-    { character_id = "character_1", text = "這位老人家，請問您剛才說的魔法石是什麼？" },
-    { character_id = "character_2", text = "這顆魔法石能改變命運，但它藏在一個危險的地方，但你需要先到城堡需找線索。" },
-    { character_id = "character_1", text = "我願意去尋找，只要能幫助這個世界，等等你還沒告訴我在哪個城堡！" },
-    { character_id = "character_2", text = "不過我也不清楚是東城還是西城，我直覺感覺是東城。" }
+        { character_id = "character_1", text = "這位老人家，請問您剛才說的魔法石是什麼？" },
+        { character_id = "character_2", text = "這顆魔法石能改變命運，但它藏在一個危險的地方，但你需要先到城堡需找線索。" },
+        { character_id = "character_1", text = "我願意去尋找，只要能幫助這個世界，等等你還沒告訴我在哪個城堡！" },
+        { character_id = "character_2", text = "不過我也不清楚是東城還是西城，我直覺感覺是東城。" }
     ]
     choices = [
         { text = "相信老人，選擇東邊的那座城堡前往", next_event_id = "event_4" },
@@ -182,7 +182,7 @@
     [events.event_10]
     id = "event_10"
     scene_id = "scene_3"
-    description = "勇者在北村森找到長老，並詢問。"
+    description = "勇者在北村找到長老，並詢問。"
     amount_choice = "1"
     amount_dialogue = "2"
     item = "item_3"
@@ -197,13 +197,13 @@
     [events.event_11]
     id = "event_11"
     scene_id = "scene_3"
-    description = "勇者在南村森找到長老，並詢問。"
+    description = "勇者在南村找到長老，並詢問。"
     amount_choice = "1"
     amount_dialogue = "2"
     item = "item_4"
     dialogue = [
-    { character_id = "character_1", text = "長老！為了完成任務，我在找尋鑰匙的下落" },
-    { character_id = "character_3", text = "你找對人了！就在我這邊，寶箱就在城堡內" },
+        { character_id = "character_1", text = "長老！為了完成任務，我在找尋鑰匙的下落" },
+        { character_id = "character_3", text = "你找對人了！就在我這邊，寶箱就在城堡內" },
     ]
     choices = [
         { text = "回到城堡", next_event_id = "event_12" }

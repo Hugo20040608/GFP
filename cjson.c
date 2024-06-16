@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <cjson/cJSON.h>
 
 int main() {
@@ -70,6 +71,8 @@ int main() {
         return 1;
     }
     // 印出 content 欄位的值
+    FILE *fp = fopen("input.txt", "ab");
+    fread(content->valuestring, 1, strlen(content->valuestring), fp);
     printf("內容：%s\n", content->valuestring);
     // 清理 cJSON 物件
     cJSON_Delete(json);

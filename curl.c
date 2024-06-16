@@ -33,6 +33,12 @@ int main(void) {
     
     // 將文件內容用於 POST 數據
     char post_data[1024] = {0};
+    int required = snprintf(NULL, 0, "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", data);
+    if (required >= sizeof(post_data)) {
+        fprintf(stderr, "Buffer size is too small for the content.\n");
+        free(data);
+        return 1;
+    }
     snprintf(post_data, sizeof(post_data), "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"%s\"}]}", data);
     printf("%s\n", post_data);
     // 釋放記憶體
@@ -103,7 +109,15 @@ void init_string(struct string *s) {
     s->ptr[0] = '\0';
 }
 // 回應數據的處理函數
-size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
-    size_t written = fwrite(ptr, size, nmemb, stream);
-    return written;
+size_t write_data(void *ptr, size_t size, size_t nmemb, struct string *s) {
+    size_t new_len = s->len + size * nmemb;
+    char *new_ptr = realloc(s->ptr, new_len + 1);
+    if (new_ptr == NULL) {
+        return 0; // 通知 libcurl 處理失敗
+    }
+    s->ptr = new_ptr;
+    memcpy(s->ptr + s->len, ptr, size * nmemb);
+    s->ptr[new_len] = '\0';
+    s->len = new_len;
+    return size * nmemb;
 }

@@ -9,7 +9,7 @@ struct string {
     size_t len;
 };
 void init_string(struct string *s);
-size_t write_data(void *ptr, size_t size, size_t nmemb, struct string *s) 
+size_t write_data(void *ptr, size_t size, size_t nmemb, struct string *s);
 int main(void) {
     CURL *curl;
     CURLcode res;

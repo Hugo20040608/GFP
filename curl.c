@@ -36,7 +36,7 @@ int main(void) {
     data[fsize] = 0; // 確保字符串結尾
     fclose(fp);
 
-    char prompt[1500] = "根據上下文，生出範例中的RANDOM_DESCRIPTION，字數約50字，不要加```，務必遵守以下範例格式輸出：";
+    char prompt[1500] = "根據上下文，生出範例中的RANDOM_DESCRIPTION，在MORE_RANDOM_DESCRIPTION生出更對角色對白，不要加```，務必遵守以下範例格式輸出：";
     size_t newdata_size = strlen(prompt) + strlen(data) + 50; // 50 為額外字符和安全邊際
     char *newdata = calloc(newdata_size, 1);
     if (newdata == NULL) {

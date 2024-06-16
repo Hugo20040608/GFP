@@ -36,14 +36,14 @@ int main(void) {
     data[fsize] = 0; // 確保字符串結尾
     fclose(fp);
 
-    char request_str[300] = "請參考story.toml的內容，擴寫description的內容，其餘不變，以下是story.toml的內容";
-    size_t newdata_size = strlen(request_str) + strlen(data) + 50; // 50 為額外字符和安全邊際
+    char prompt[300] = "請參考story.toml的內容，擴寫description的內容，其餘不變，輸出務必完整，以下是story.toml的內容";
+    size_t newdata_size = strlen(prompt) + strlen(data) + 50; // 50 為額外字符和安全邊際
     char *newdata = calloc(newdata_size, 1);
     if (newdata == NULL) {
         fprintf(stderr, "Failed to allocate memory for newdata.\n");
         return 1;
     }
-    snprintf(newdata, newdata_size, "%s%s", request_str, data);
+    snprintf(newdata, newdata_size, "%s%s", prompt, data);
     // 轉義 data 中的特殊 JSON 字符
     char *escaped_data = escape_json_string(newdata);
     free(data);  // 釋放原始 data，使用轉義後的字符串

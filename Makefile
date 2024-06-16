@@ -5,6 +5,7 @@ chatgpt:
 	./chatgpt
 	gcc cjson.c -lcjson -o chatgpt
 	./chatgpt
+	rm chatgpt
 run:
 	./game
 clean:

@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 #include "escape_json_string.h"
-// #include <cjson/cJSON.h>
 #include "APIKEY.h"
 struct string {
     char *ptr;

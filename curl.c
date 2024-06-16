@@ -36,7 +36,7 @@ int main(void) {
     data[fsize] = 0; // 確保字符串結尾
     fclose(fp);
 
-    char prompt[500] = "請參考story.toml的內容，擴寫description的內容，以及event的dialogue，其餘不變，輸出務必完整，輸出不用```，以下是story.toml的內容";
+    char prompt[500] = "請參考story.toml的內容，擴寫description的內容，以及擴寫event的dialogue的text，其餘不變，輸出務必完整，輸出不用```，以下是story.toml的內容";
     size_t newdata_size = strlen(prompt) + strlen(data) + 50; // 50 為額外字符和安全邊際
     char *newdata = calloc(newdata_size, 1);
     if (newdata == NULL) {

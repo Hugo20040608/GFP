@@ -5,13 +5,13 @@
 引擎實作了哪些功能、已知問題、注意事項等資訊
 劇本檔格式、命名方式、存放地點等 -->
 ## 我們的TOML格式介紹
-![截圖 2024-06-14 下午4.39.07](https://hackmd.io/_uploads/HyrsdT9rC.png)
+![截圖 2024-06-14 下午4.39.07](README_files/p1.png)
 
 **中括號為標題內容**
 1. 第一層標題：用簡單名稱命名
 2. 第二層標題：再用更詳細，像是用數字標注不同的內容
 
-![截圖 2024-06-14 下午4.32.41](https://hackmd.io/_uploads/ry9cd6qrC.png)
+![截圖 2024-06-14 下午4.32.41](README_files/p2.png)
 
 3. 第三層內文：id的命名最重要，在找尋內文時是利用id尋找
 4. 第四層內文：像是對話內容即問題選擇，將內容利用陣列儲存
@@ -40,7 +40,7 @@ is_ending = "fail" //這代表這個章節是失敗結局
 
 
 參考劇本設計過程:
-![IMG_1101](https://hackmd.io/_uploads/HyrDkAqHR.jpg)
+![IMG_1101](README_files/p3.jpeg)
 
 ## 功能介紹及使用引擎使用方法
 ### 程式開頭
@@ -110,7 +110,5 @@ step2. 在終端機執行
 ```
 make chatgpt
 ```
-:::
+prompt在input.txt，結果會輸出在output.txt 或是產生新的story.toml
 
-
----------
